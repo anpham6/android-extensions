@@ -1,0 +1,17 @@
+{
+  "extends": "../squared/tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./build"
+  },
+  "include": [
+    "../squared/types/base/object.d.ts",
+    "../squared/types/index.d.ts",
+    "../squared/types/android/index.d.ts",
+    "**/*.ts"
+  ],
+  "exclude": [
+    "build",
+    "dist",
+    "temp"
+  ]
+}

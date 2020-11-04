@@ -1,0 +1,33 @@
+{
+  "name": "android-extensions",
+  "version": "2.1.0",
+  "description": "Extensions for the Android framework.",
+  "scripts": {
+    "prod": "npm run clean && eslint **/*.ts && tsc && rollup -c ./constraint/rollup.config.js && rollup -c ./widget/rollup.config.js",
+    "clean": "rimraf build/* && rimraf dist/*"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/anpham6/squared.git"
+  },
+  "keywords": [
+    "squared",
+    "squared-apache",
+    "android"
+  ],
+  "author": "An Pham <anpham6@gmail.com>",
+  "license": "MIT",
+  "homepage": "https://github.com/anpham6/squared#readme",
+  "dependencies": {
+    "@typescript-eslint/eslint-plugin": "^4.6.1",
+    "@typescript-eslint/parser": "^4.6.1",
+    "eslint": "^7.12.1",
+    "prettier": "^2.1.2",
+    "rimraf": "^3.0.2",
+    "rollup": "^2.33.1",
+    "rollup-plugin-prettier": "^2.1.0",
+    "rollup-plugin-terser": "^7.0.2",
+    "terser": "^5.3.8",
+    "typescript": "^4.0.5"
+  }
+}
