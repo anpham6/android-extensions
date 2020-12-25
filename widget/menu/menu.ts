@@ -1,7 +1,7 @@
 import CREATE_NODE = squared.base.lib.internal.CREATE_NODE;
 import NODE_ALIGNMENT = squared.base.lib.constant.NODE_ALIGNMENT;
 import NODE_TEMPLATE = squared.base.lib.constant.NODE_TEMPLATE;
-import EXT_ANDROID = android.base.EXT_ANDROID;
+import EXT_ANDROID = android.internal.EXT_ANDROID;
 
 type View = android.base.View;
 

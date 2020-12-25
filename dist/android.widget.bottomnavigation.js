@@ -14,47 +14,34 @@ this.android.widget.bottomnavigation = (function () {
     class BottomNavigation extends squared.base.ExtensionUI {
         constructor(name, framework, options) {
             super(name, framework, options);
-            this.require({ name: 'android.widget.menu' /* MENU */ });
+            this.require({ name: "android.widget.menu" /* MENU */ });
         }
         processNode(node, parent) {
             const options = createViewAttribute(this.options[node.elementId]);
             assignEmptyValue(options, 'android', 'background', '?android:attr/windowBackground');
-            iterateArray(
-                node.children,
-                item => {
-                    item.hide();
-                    item.cascade(child => {
-                        child.hide();
-                    });
-                },
-                5
-            );
-            const controlName =
-                node.api < 29 /* Q */ ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
+            iterateArray(node.children, (item) => {
+                item.hide();
+                item.cascade((child) => {
+                    child.hide();
+                });
+            }, 5);
+            const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
             node.setControlType(controlName, CONTAINER_NODE.BLOCK);
             node.exclude({ resource: NODE_RESOURCE.ASSET });
             node.render(parent);
-            node.apply(
-                Resource.formatOptions(
-                    options,
-                    this.application.extensionManager.valueAsBoolean(
-                        'android.resource.strings' /* RESOURCE_STRINGS */,
-                        'numberAsResource'
-                    )
-                )
-            );
+            node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
             node.setLayoutWidth('match_parent');
             node.setLayoutHeight('wrap_content');
-            node.cascade(item => this.addDescendant(item));
+            node.cascade((item) => this.addDescendant(item));
             this.setStyleTheme();
             return {
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName,
+                    controlName
                 },
                 complete: true,
-                include: true,
+                include: true
             };
         }
         postOptimize(node) {
@@ -68,11 +55,7 @@ this.android.widget.bottomnavigation = (function () {
                     renderParent.setLayoutHeight('match_parent');
                 }
             }
-            const menu =
-                (_a = BottomNavigation.findNestedElement(node, 'android.widget.menu' /* MENU */)) === null ||
-                _a === void 0
-                    ? void 0
-                    : _a.dataset['layoutName' + capitalize(this.application.systemName)];
+            const menu = (_a = BottomNavigation.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['layoutName' + capitalize(this.application.systemName)];
             if (menu) {
                 const options = createViewAttribute(this.options[node.elementId]);
                 const app = options.app || (options.app = {});
@@ -88,13 +71,11 @@ this.android.widget.bottomnavigation = (function () {
         }
     }
 
-    const bottomNavigation = new BottomNavigation(
-        'android.widget.bottomnavigation' /* BOTTOM_NAVIGATION */,
-        2 /* ANDROID */
-    );
+    const bottomNavigation = new BottomNavigation("android.widget.bottomnavigation" /* BOTTOM_NAVIGATION */, 2 /* ANDROID */);
     if (squared) {
         squared.add(bottomNavigation);
     }
 
     return bottomNavigation;
-})();
+
+}());

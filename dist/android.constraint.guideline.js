@@ -15,7 +15,7 @@ this.android.constraint.guideline = (function () {
         constructor() {
             super(...arguments);
             this.options = {
-                circlePosition: true,
+                circlePosition: true
             };
         }
         is(node) {
@@ -26,9 +26,7 @@ this.android.constraint.guideline = (function () {
         }
         processNode(node, parent) {
             return {
-                output: this.application.renderNode(
-                    new LayoutUI(parent, node, CONTAINER_NODE.CONSTRAINT, 16 /* ABSOLUTE */)
-                ),
+                output: this.application.renderNode(new LayoutUI(parent, node, CONTAINER_NODE.CONSTRAINT, 16 /* ABSOLUTE */))
             };
         }
         postBaseLayout(node) {
@@ -36,7 +34,7 @@ this.android.constraint.guideline = (function () {
             const circlePosition = this.options.circlePosition;
             const { left, top } = node.box;
             let anchor;
-            node.each(item => {
+            node.each((item) => {
                 const linear = item.linear;
                 if (withinRange(linear.left, left)) {
                     item.anchorParent('horizontal', 0);
@@ -47,13 +45,16 @@ this.android.constraint.guideline = (function () {
                 if (circlePosition) {
                     if (item.anchored) {
                         anchor = item;
-                    } else if (anchor) {
+                    }
+                    else if (anchor) {
                         if (item.constraint.vertical && !anchor.constraint.vertical) {
                             anchor = item;
                         }
-                    } else if (item.constraint.vertical) {
+                    }
+                    else if (item.constraint.vertical) {
                         anchor = item;
-                    } else if (item.constraint.horizontal) {
+                    }
+                    else if (item.constraint.horizontal) {
                         anchor = item;
                     }
                 }
@@ -65,7 +66,7 @@ this.android.constraint.guideline = (function () {
                     controller.addGuideline({ target: anchor, parent: node });
                 }
                 const { x: x2, y: y2 } = anchor.center;
-                node.each(item => {
+                node.each((item) => {
                     if (!item.anchored) {
                         const { x: x1, y: y1 } = item.center;
                         const x = Math.abs(x1 - x2);
@@ -76,25 +77,32 @@ this.android.constraint.guideline = (function () {
                             if (x1 > x2) {
                                 if (x > y) {
                                     degrees += 90;
-                                } else {
+                                }
+                                else {
                                     degrees = 180 - degrees;
                                 }
-                            } else if (x > y) {
+                            }
+                            else if (x > y) {
                                 degrees = 270 - degrees;
-                            } else {
+                            }
+                            else {
                                 degrees += 180;
                             }
-                        } else if (y1 < y2) {
+                        }
+                        else if (y1 < y2) {
                             if (x2 > x1) {
                                 if (x > y) {
                                     degrees += 270;
-                                } else {
+                                }
+                                else {
                                     degrees = 360 - degrees;
                                 }
-                            } else if (x > y) {
+                            }
+                            else if (x > y) {
                                 degrees = 90 - degrees;
                             }
-                        } else {
+                        }
+                        else {
                             degrees = x1 > x2 ? 90 : 270;
                         }
                         item.app('layout_constraintCircle', anchor.documentId);
@@ -102,8 +110,9 @@ this.android.constraint.guideline = (function () {
                         item.app('layout_constraintCircleAngle', degrees.toString());
                     }
                 });
-            } else {
-                node.each(target => {
+            }
+            else {
+                node.each((target) => {
                     if (!target.anchored) {
                         controller.addGuideline({ target, parent: node });
                     }
@@ -112,10 +121,11 @@ this.android.constraint.guideline = (function () {
         }
     }
 
-    const guideline = new Guideline('android.constraint.guideline' /* GUIDELINE */, 2 /* ANDROID */);
+    const guideline = new Guideline("android.constraint.guideline" /* GUIDELINE */, 2 /* ANDROID */);
     if (squared) {
         squared.add(guideline);
     }
 
     return guideline;
-})();
+
+}());

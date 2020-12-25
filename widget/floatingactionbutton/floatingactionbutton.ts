@@ -70,7 +70,7 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
         const controlName = node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.FLOATING_ACTION_BUTTON : SUPPORT_TAGNAME_X.FLOATING_ACTION_BUTTON;
         node.setControlType(controlName, CONTAINER_NODE.BUTTON);
         node.exclude({ resource: NODE_RESOURCE.BOX_STYLE | NODE_RESOURCE.ASSET });
-        Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(android.base.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
+        Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(android.internal.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
         if (!node.pageFlow) {
             const offsetParent = (this.application as android.base.Application<T>).resolveTarget(node.sessionId, target) || parent;
             if (node.autoMargin.leftRight) {

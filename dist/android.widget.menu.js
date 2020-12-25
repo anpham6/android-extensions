@@ -30,7 +30,7 @@ this.android.widget.menu = (function () {
         visible: /^(true|false)$/,
         enabled: /^(true|false)$/,
         menuCategory: /^(container|system|secondary|alternative)$/,
-        orderInCategory: /^\d+$/,
+        orderInCategory: /^\d+$/
     };
     const REGEXP_GROUP = {
         id: /^@\+id\/\w+$/,
@@ -38,14 +38,18 @@ this.android.widget.menu = (function () {
         visible: /^(true|false)$/,
         enabled: /^(true|false)$/,
         menuCategory: /^(container|system|secondary|alternative)$/,
-        orderInCategory: /^\d+$/,
+        orderInCategory: /^\d+$/
     };
     const NAVIGATION = {
         MENU: 'menu',
         ITEM: 'item',
-        GROUP: 'group',
+        GROUP: 'group'
     };
-    const NAMESPACE_APP = ['showAsAction', 'actionViewClass', 'actionProviderClass'];
+    const NAMESPACE_APP = [
+        'showAsAction',
+        'actionViewClass',
+        'actionProviderClass'
+    ];
     const PREFIX_MENU = 'ic_menu_';
     function parseDataSet(validator, element, options) {
         const dataset = element.dataset;
@@ -80,12 +84,12 @@ this.android.widget.menu = (function () {
         constructor(name, framework, options) {
             super(name, framework, options);
             this.cascadeAll = true;
-            this.require({ name: 'android.external' /* EXTERNAL */, leading: true });
+            this.require({ name: "android.external" /* EXTERNAL */, leading: true });
         }
         beforeInsertNode(element, sessionId) {
             if (this.included(element)) {
                 if (element.childElementCount) {
-                    if (!sameArray(element.children, item => item.tagName)) {
+                    if (!sameArray(element.children, (item) => item.tagName)) {
                         return false;
                     }
                     const rootElements = this.application.getProcessing(sessionId).rootElements;
@@ -114,19 +118,16 @@ this.android.widget.menu = (function () {
             node.addAlign(2 /* AUTO_LAYOUT */);
             node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });
             node.render(outerParent);
-            node.cascade(item => this.addDescendant(item));
-            node.dataset['pathname' + capitalize(this.application.systemName)] = appendSeparator(
-                this.controller.userSettings.outputDirectory,
-                'res/menu'
-            );
+            node.cascade((item) => this.addDescendant(item));
+            node.dataset['pathname' + capitalize(this.application.systemName)] = appendSeparator(this.controller.userSettings.outputDirectory, 'res/menu');
             return {
                 outerParent,
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName: NAVIGATION.MENU,
+                    controlName: NAVIGATION.MENU
                 },
-                complete: true,
+                complete: true
             };
         }
         processChild(node, parent) {
@@ -141,19 +142,23 @@ this.android.widget.menu = (function () {
             if (node.tagName === 'NAV') {
                 controlName = NAVIGATION.MENU;
                 title = getTitle(node, element);
-            } else if (node.find(item => !item.isEmpty())) {
+            }
+            else if (node.find(item => !item.isEmpty())) {
                 if (node.find(item => item.tagName === 'NAV')) {
                     controlName = NAVIGATION.ITEM;
-                } else {
+                }
+                else {
                     controlName = NAVIGATION.GROUP;
-                    if (node.every(item => hasInputType(item, 'radio'))) {
+                    if (node.every((item) => hasInputType(item, 'radio'))) {
                         android.checkableBehavior = 'single';
-                    } else if (node.every(item => hasInputType(item, 'checkbox'))) {
+                    }
+                    else if (node.every((item) => hasInputType(item, 'checkbox'))) {
                         android.checkableBehavior = 'all';
                     }
                 }
                 title = getTitle(node, element);
-            } else {
+            }
+            else {
                 controlName = NAVIGATION.ITEM;
                 title = (element.title || element.innerText).trim();
                 if (hasInputType(node, 'checkbox') && !parent.android('checkableBehavior')) {
@@ -175,7 +180,8 @@ this.android.widget.menu = (function () {
                         let src = resource.addImageSrc(node.backgroundImage, PREFIX_MENU);
                         if (src) {
                             android.icon = `@drawable/${src}`;
-                        } else {
+                        }
+                        else {
                             const image = node.find(item => item.imageElement);
                             if (image) {
                                 src = resource.addImageSrc(image.element, PREFIX_MENU);
@@ -185,18 +191,11 @@ this.android.widget.menu = (function () {
                             }
                         }
                     }
-                    node.each(item => item.tagName !== 'NAV' && item.hide());
+                    node.each((item) => item.tagName !== 'NAV' && item.hide());
                     break;
             }
             if (title) {
-                android.title = Resource.addString(
-                    title,
-                    '',
-                    this.application.extensionManager.valueAsBoolean(
-                        'android.resource.strings' /* RESOURCE_STRINGS */,
-                        'numberAsResource'
-                    )
-                );
+                android.title = Resource.addString(title, '', this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             }
             node.setControlType(controlName, CONTAINER_NODE.INLINE);
             node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });
@@ -206,18 +205,19 @@ this.android.widget.menu = (function () {
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName,
+                    controlName
                 },
                 complete: true,
-                next: controlName === NAVIGATION.MENU,
+                next: controlName === NAVIGATION.MENU
             };
         }
     }
 
-    const menu = new Menu('android.widget.menu' /* MENU */, 2 /* ANDROID */, { tagNames: ['NAV'] });
+    const menu = new Menu("android.widget.menu" /* MENU */, 2 /* ANDROID */, { tagNames: ['NAV'] });
     if (squared) {
         squared.add(menu);
     }
 
     return menu;
-})();
+
+}());

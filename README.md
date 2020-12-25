@@ -1,9 +1,4 @@
-# android-extensions 2.1
-
-&nbsp;&nbsp;&nbsp;&gt; git clone https://github.com/anpham6/squared-apache  
-&nbsp;&nbsp;&nbsp;&gt; cd squared-apache  
-&nbsp;&nbsp;&nbsp;&gt; squared.settings.yml (configure)  
-&nbsp;&nbsp;&nbsp;&gt; gradlew run
+# android-extensions 2.2
 
 ```javascript
 <script src="/dist/extensions/android.widget.coordinator.min.js"></script>

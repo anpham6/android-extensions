@@ -1,7 +1,7 @@
 import CREATE_NODE = squared.base.lib.internal.CREATE_NODE;
 import NODE_TEMPLATE = squared.base.lib.constant.NODE_TEMPLATE;
 import BUILD_VERSION = android.lib.constant.BUILD_VERSION;
-import EXT_ANDROID = android.base.EXT_ANDROID;
+import EXT_ANDROID = android.internal.EXT_ANDROID;
 
 import { WIDGET_NAME } from '../lib/constant';
 

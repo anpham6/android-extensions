@@ -11,7 +11,14 @@ this.android.widget.floatingactionbutton = (function () {
     const { assignEmptyValue } = squared.lib.util;
     const { createViewAttribute, parseColor } = android.lib.util;
     const Resource = android.base.Resource;
-    const SUPPORTED_INPUT = ['button', 'file', 'image', 'reset', 'search', 'submit'];
+    const SUPPORTED_INPUT = [
+        'button',
+        'file',
+        'image',
+        'reset',
+        'search',
+        'submit'
+    ];
     const PREFIX_DIALOG = 'ic_dialog_';
     class FloatingActionButton extends squared.base.ExtensionUI {
         is(node) {
@@ -32,12 +39,7 @@ this.android.widget.floatingactionbutton = (function () {
                     colorName = Resource.addColor(colorData);
                 }
             }
-            assignEmptyValue(
-                options,
-                'android',
-                'backgroundTint',
-                colorName ? `@color/${colorName}` : '?attr/colorAccent'
-            );
+            assignEmptyValue(options, 'android', 'backgroundTint', colorName ? `@color/${colorName}` : '?attr/colorAccent');
             if (!node.hasProcedure(NODE_PROCEDURE.ACCESSIBILITY)) {
                 assignEmptyValue(options, 'android', 'focusable', 'false');
             }
@@ -58,54 +60,38 @@ this.android.widget.floatingactionbutton = (function () {
             if (src) {
                 assignEmptyValue(options.app || (options.app = {}), 'srcCompat', `@drawable/${src}`);
             }
-            const controlName =
-                node.api < 29 /* Q */
-                    ? SUPPORT_TAGNAME.FLOATING_ACTION_BUTTON
-                    : SUPPORT_TAGNAME_X.FLOATING_ACTION_BUTTON;
+            const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.FLOATING_ACTION_BUTTON : SUPPORT_TAGNAME_X.FLOATING_ACTION_BUTTON;
             node.setControlType(controlName, CONTAINER_NODE.BUTTON);
             node.exclude({ resource: NODE_RESOURCE.BOX_STYLE | NODE_RESOURCE.ASSET });
-            Resource.formatOptions(
-                options,
-                this.application.extensionManager.valueAsBoolean(
-                    'android.resource.strings' /* RESOURCE_STRINGS */,
-                    'numberAsResource'
-                )
-            );
+            Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             if (!node.pageFlow) {
                 const offsetParent = this.application.resolveTarget(node.sessionId, target) || parent;
                 if (node.autoMargin.leftRight) {
                     node.mergeGravity('layout_gravity', 'center_horizontal');
-                } else if (node.hasPX('left')) {
+                }
+                else if (node.hasPX('left')) {
                     node.mergeGravity('layout_gravity', node.localizeString('left'));
-                    node.modifyBox(
-                        8 /* MARGIN_LEFT */,
-                        offsetParent.getAbsolutePaddingOffset(128 /* PADDING_LEFT */, node.left)
-                    );
-                } else if (node.hasPX('right')) {
+                    node.modifyBox(8 /* MARGIN_LEFT */, offsetParent.getAbsolutePaddingOffset(128 /* PADDING_LEFT */, node.left));
+                }
+                else if (node.hasPX('right')) {
                     node.mergeGravity('layout_gravity', node.localizeString('right'));
-                    node.modifyBox(
-                        2 /* MARGIN_RIGHT */,
-                        offsetParent.getAbsolutePaddingOffset(32 /* PADDING_RIGHT */, node.right)
-                    );
+                    node.modifyBox(2 /* MARGIN_RIGHT */, offsetParent.getAbsolutePaddingOffset(32 /* PADDING_RIGHT */, node.right));
                 }
                 if (node.autoMargin.topBottom) {
                     node.mergeGravity('layout_gravity', 'center_vertical');
-                } else if (node.hasPX('top')) {
+                }
+                else if (node.hasPX('top')) {
                     node.app('layout_dodgeInsetEdges', 'top');
                     node.mergeGravity('layout_gravity', 'top');
-                    node.modifyBox(
-                        1 /* MARGIN_TOP */,
-                        offsetParent.getAbsolutePaddingOffset(16 /* PADDING_TOP */, node.top)
-                    );
-                } else if (node.hasPX('bottom')) {
+                    node.modifyBox(1 /* MARGIN_TOP */, offsetParent.getAbsolutePaddingOffset(16 /* PADDING_TOP */, node.top));
+                }
+                else if (node.hasPX('bottom')) {
                     node.mergeGravity('layout_gravity', 'bottom');
-                    node.modifyBox(
-                        4 /* MARGIN_BOTTOM */,
-                        offsetParent.getAbsolutePaddingOffset(64 /* PADDING_BOTTOM */, node.bottom)
-                    );
+                    node.modifyBox(4 /* MARGIN_BOTTOM */, offsetParent.getAbsolutePaddingOffset(64 /* PADDING_BOTTOM */, node.bottom));
                 }
                 node.positioned = true;
-            } else if (target) {
+            }
+            else if (target) {
                 const box = node.documentParent.box;
                 const linear = node.linear;
                 const horizontalBias = node.getHorizontalBias();
@@ -113,20 +99,24 @@ this.android.widget.floatingactionbutton = (function () {
                 if (horizontalBias < 0.5) {
                     node.mergeGravity('layout_gravity', node.localizeString('left'));
                     node.modifyBox(8 /* MARGIN_LEFT */, linear.left - box.left);
-                } else if (horizontalBias > 0.5) {
+                }
+                else if (horizontalBias > 0.5) {
                     node.mergeGravity('layout_gravity', node.localizeString('right'));
                     node.modifyBox(2 /* MARGIN_RIGHT */, box.right - linear.right);
-                } else {
+                }
+                else {
                     node.mergeGravity('layout_gravity', 'center_horizontal');
                 }
                 if (verticalBias < 0.5) {
                     node.app('layout_dodgeInsetEdges', 'top');
                     node.mergeGravity('layout_gravity', 'top');
                     node.modifyBox(1 /* MARGIN_TOP */, linear.top - box.top);
-                } else if (verticalBias > 0.5) {
+                }
+                else if (verticalBias > 0.5) {
                     node.mergeGravity('layout_gravity', 'bottom');
                     node.modifyBox(4 /* MARGIN_BOTTOM */, box.bottom - linear.bottom);
-                } else {
+                }
+                else {
                     node.mergeGravity('layout_gravity', 'center_vertical');
                 }
                 node.positioned = true;
@@ -134,10 +124,8 @@ this.android.widget.floatingactionbutton = (function () {
             if (target) {
                 const layoutGravity = node.android('layout_gravity');
                 let anchor = parent.documentId;
-                if (
-                    parent.controlName === (node.api < 29 /* Q */ ? SUPPORT_TAGNAME.TOOLBAR : SUPPORT_TAGNAME_X.TOOLBAR)
-                ) {
-                    const value = parent.data('android.widget.toolbar' /* TOOLBAR */, 'outerParent');
+                if (parent.controlName === (node.api < 29 /* Q */ ? SUPPORT_TAGNAME.TOOLBAR : SUPPORT_TAGNAME_X.TOOLBAR)) {
+                    const value = parent.data("android.widget.toolbar" /* TOOLBAR */, 'outerParent');
                     if (value) {
                         anchor = value;
                     }
@@ -155,19 +143,18 @@ this.android.widget.floatingactionbutton = (function () {
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName,
+                    controlName
                 },
-                complete: true,
+                complete: true
             };
         }
     }
 
-    const fab = new FloatingActionButton('android.widget.floatingactionbutton' /* FAB */, 2 /* ANDROID */, {
-        tagNames: ['BUTTON', 'INPUT', 'IMG'],
-    });
+    const fab = new FloatingActionButton("android.widget.floatingactionbutton" /* FAB */, 2 /* ANDROID */, { tagNames: ['BUTTON', 'INPUT', 'IMG'] });
     if (squared) {
         squared.add(fab);
     }
 
     return fab;
-})();
+
+}());

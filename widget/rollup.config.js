@@ -1,7 +1,6 @@
-import { terser_options, prettier_options } from '../../squared/config/rollup-options';
+import { terser_options } from '../../squared/config/rollup-options';
 import { version } from './package.json';
 
-import prettier from 'rollup-plugin-prettier';
 import { terser } from 'rollup-plugin-terser'
 
 export default [
@@ -86,9 +85,7 @@ export default [
             format: 'iife',
             banner: `/* android.widget.bottomnavigation ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     },
     {
         input: './build/widget/coordinator/main.js',
@@ -99,9 +96,7 @@ export default [
             format: 'iife',
             banner: `/* android.widget.coordinator ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     },
     {
         input: './build/widget/drawer/main.js',
@@ -112,9 +107,7 @@ export default [
             format: 'iife',
             banner: `/* android.widget.drawer ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     },
     {
         input: './build/widget/floatingactionbutton/main.js',
@@ -125,9 +118,7 @@ export default [
             format: 'iife',
             banner: `/* android.widget.floatingactionbutton ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     },
     {
         input: './build/widget/menu/main.js',
@@ -138,9 +129,7 @@ export default [
             format: 'iife',
             banner: `/* android.widget.menu ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     },
     {
         input: './build/widget/toolbar/main.js',
@@ -151,8 +140,6 @@ export default [
             format: 'iife',
             banner: `/* android.widget.toolbar ${version}\n   https://github.com/anpham6/squared */\n`
         },
-        plugins: [
-            prettier(prettier_options)
-        ]
+        plugins: []
     }
 ];

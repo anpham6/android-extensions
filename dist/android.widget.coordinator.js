@@ -15,22 +15,12 @@ this.android.widget.coordinator = (function () {
         processNode(node, parent) {
             var _a;
             const options = createViewAttribute(this.options[node.elementId]);
-            Resource.formatOptions(
-                options,
-                this.application.extensionManager.valueAsBoolean(
-                    'android.resource.strings' /* RESOURCE_STRINGS */,
-                    'numberAsResource'
-                )
-            );
-            const element = Coordinator.findNestedElement(node, 'android.widget.toolbar' /* TOOLBAR */);
+            Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
+            const element = Coordinator.findNestedElement(node, "android.widget.toolbar" /* TOOLBAR */);
             if (element) {
                 const toolbar = getElementAsNode(element, node.sessionId);
                 if (toolbar) {
-                    const data =
-                        (_a = this.application.extensionManager.get('android.widget.toolbar' /* TOOLBAR */)) === null ||
-                        _a === void 0
-                            ? void 0
-                            : _a.options[toolbar.elementId];
+                    const data = (_a = this.application.extensionManager.get("android.widget.toolbar" /* TOOLBAR */)) === null || _a === void 0 ? void 0 : _a.options[toolbar.elementId];
                     if (data && 'collapsingToolbar' in data) {
                         node.android('fitsSystemWindows', 'true');
                     }
@@ -45,8 +35,8 @@ this.android.widget.coordinator = (function () {
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName,
-                },
+                    controlName
+                }
             };
         }
         postOptimize(node) {
@@ -61,10 +51,11 @@ this.android.widget.coordinator = (function () {
         }
     }
 
-    const coordinator = new Coordinator('android.widget.coordinator' /* COORDINATOR */, 2 /* ANDROID */);
+    const coordinator = new Coordinator("android.widget.coordinator" /* COORDINATOR */, 2 /* ANDROID */);
     if (squared) {
         squared.add(coordinator);
     }
 
     return coordinator;
-})();
+
+}());

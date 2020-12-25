@@ -15,22 +15,18 @@ this.android.widget.drawer = (function () {
         constructor(name, framework, options) {
             super(name, framework, options);
             this.documentBase = true;
-            this.require({ name: 'android.external' /* EXTERNAL */, leading: true });
-            this.require({ name: 'android.widget.menu' /* MENU */ });
-            this.require({ name: 'android.widget.coordinator' /* COORDINATOR */ });
+            this.require({ name: "android.external" /* EXTERNAL */, leading: true });
+            this.require({ name: "android.widget.menu" /* MENU */ });
+            this.require({ name: "android.widget.coordinator" /* COORDINATOR */ });
         }
         beforeInsertNode(element, sessionId) {
             if (this.included(element)) {
                 const application = this.application;
-                iterateArray(element.children, item => {
+                iterateArray(element.children, (item) => {
                     if (item.tagName === 'NAV') {
                         const use = application.getDatasetName('use', item);
-                        if (!Drawer.includes(use, 'android.external' /* EXTERNAL */)) {
-                            application.setDatasetName(
-                                'use',
-                                item,
-                                (use ? use + ', ' : '') + 'android.external' /* EXTERNAL */
-                            );
+                        if (!Drawer.includes(use, "android.external" /* EXTERNAL */)) {
+                            application.setDatasetName('use', item, (use ? use + ', ' : '') + "android.external" /* EXTERNAL */);
                         }
                     }
                 });
@@ -41,10 +37,11 @@ this.android.widget.drawer = (function () {
         }
         processNode(node, parent) {
             const options = createViewAttribute(this.options.self);
-            if (Drawer.findNestedElement(node, 'android.widget.menu' /* MENU */)) {
+            if (Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) {
                 assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
                 this.setStyleTheme(node.api);
-            } else {
+            }
+            else {
                 const navigationViewOptions = createViewAttribute(this.options.navigationView);
                 assignEmptyValue(navigationViewOptions, 'android', 'layout_gravity', node.localizeString('left'));
                 const navView = node.item(-1);
@@ -57,15 +54,7 @@ this.android.widget.drawer = (function () {
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.DRAWER : SUPPORT_TAGNAME_X.DRAWER;
             node.setControlType(controlName, CONTAINER_NODE.BLOCK);
             node.exclude({ resource: NODE_RESOURCE.FONT_STYLE });
-            node.apply(
-                Resource.formatOptions(
-                    options,
-                    this.application.extensionManager.valueAsBoolean(
-                        'android.resource.strings' /* RESOURCE_STRINGS */,
-                        'numberAsResource'
-                    )
-                )
-            );
+            node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
             node.render(parent);
             node.setLayoutWidth('match_parent');
             node.setLayoutHeight('match_parent');
@@ -73,11 +62,11 @@ this.android.widget.drawer = (function () {
                 output: {
                     type: 1 /* XML */,
                     node,
-                    controlName,
+                    controlName
                 },
                 complete: true,
                 include: true,
-                remove: true,
+                remove: true
             };
         }
         afterParseDocument(sessionId) {
@@ -86,16 +75,8 @@ this.android.widget.drawer = (function () {
                 if (node.sessionId === sessionId) {
                     const systemName = node.localSettings.systemName;
                     const options = createViewAttribute(this.options.navigationView);
-                    const menu =
-                        (_a = Drawer.findNestedElement(node, 'android.widget.menu' /* MENU */)) === null ||
-                        _a === void 0
-                            ? void 0
-                            : _a.dataset['layoutName' + systemName];
-                    const headerLayout =
-                        (_b = Drawer.findNestedElement(node, 'android.external' /* EXTERNAL */)) === null ||
-                        _b === void 0
-                            ? void 0
-                            : _b.dataset['layoutName' + systemName];
+                    const menu = (_a = Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['layoutName' + systemName];
+                    const headerLayout = (_b = Drawer.findNestedElement(node, "android.external" /* EXTERNAL */)) === null || _b === void 0 ? void 0 : _b.dataset['layoutName' + systemName];
                     const app = options.app || (options.app = {});
                     if (menu) {
                         assignEmptyValue(app, 'menu', `@menu/${menu}`);
@@ -108,26 +89,11 @@ this.android.widget.drawer = (function () {
                         assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
                         assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
                         assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
-                        controller.addAfterInsideTemplate(
-                            node,
-                            controller.renderNodeStatic(
-                                {
-                                    controlName:
-                                        node.api < 29 /* Q */
-                                            ? SUPPORT_TAGNAME.NAVIGATION_VIEW
-                                            : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
-                                    width: 'wrap_content',
-                                    height: 'match_parent',
-                                },
-                                Resource.formatOptions(
-                                    options,
-                                    this.application.extensionManager.valueAsBoolean(
-                                        'android.resource.strings' /* RESOURCE_STRINGS */,
-                                        'numberAsResource'
-                                    )
-                                )
-                            )
-                        );
+                        controller.addAfterInsideTemplate(node, controller.renderNodeStatic({
+                            controlName: node.api < 29 /* Q */ ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
+                            width: 'wrap_content',
+                            height: 'match_parent'
+                        }, Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'))));
                     }
                 }
             }
@@ -158,10 +124,11 @@ this.android.widget.drawer = (function () {
         }
     }
 
-    const drawer = new Drawer('android.widget.drawer' /* DRAWER */, 2 /* ANDROID */);
+    const drawer = new Drawer("android.widget.drawer" /* DRAWER */, 2 /* ANDROID */);
     if (squared) {
         squared.add(drawer);
     }
 
     return drawer;
-})();
+
+}());
