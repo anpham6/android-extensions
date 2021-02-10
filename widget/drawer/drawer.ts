@@ -1,6 +1,6 @@
 import NODE_TEMPLATE = squared.base.lib.constant.NODE_TEMPLATE;
 import BUILD_VERSION = android.lib.constant.BUILD_VERSION;
-import EXT_ANDROID = android.internal.EXT_ANDROID;
+import EXT_ANDROID = internal.android.EXT_ANDROID;
 
 import { WIDGET_NAME } from '../lib/constant';
 
@@ -35,7 +35,10 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
                     }
                 }
             });
-            application.getProcessing(sessionId)!.rootElements.add(element);
+            const rootElements = application.getProcessing(sessionId)!.rootElements;
+            if (!rootElements.includes(element)) {
+                rootElements.push(element);
+            }
             return true;
         }
         return false;
@@ -43,9 +46,10 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
 
     public processNode(node: T, parent: T) {
         const options = createViewAttribute(this.options.self);
+        const resourceId = node.localSettings.resourceId;
         if (Drawer.findNestedElement(node, WIDGET_NAME.MENU)) {
             assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
-            this.setStyleTheme(node.api);
+            this.setStyleTheme(resourceId, node.api);
         }
         else {
             const navigationViewOptions = createViewAttribute(this.options.navigationView);
@@ -60,7 +64,7 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
         const controlName = node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.DRAWER : SUPPORT_TAGNAME_X.DRAWER;
         node.setControlType(controlName, CONTAINER_NODE.BLOCK);
         node.exclude({ resource: NODE_RESOURCE.FONT_STYLE });
-        node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource')));
+        node.apply(Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource')));
         node.render(parent);
         node.setLayoutWidth('match_parent');
         node.setLayoutHeight('match_parent');
@@ -103,7 +107,7 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
                                 width: 'wrap_content',
                                 height: 'match_parent'
                             },
-                            Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'))
+                            Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'))
                         )
                     );
                 }
@@ -119,13 +123,13 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
         }
     }
 
-    public setStyleTheme(api: number) {
+    public setStyleTheme(resourceId: number, api: number) {
         const settings = this.application.userSettings;
         const options = createThemeAttribute(this.options.resource);
         assignEmptyValue(options, 'name', settings.manifestThemeName);
         assignEmptyValue(options, 'parent', settings.manifestParentThemeName);
         assignEmptyValue(options.items, 'android:windowTranslucentStatus', 'true');
-        Resource.addTheme(options);
+        Resource.addTheme(resourceId, options);
         if (api >= BUILD_VERSION.LOLLIPOP) {
             const themeOptions = createThemeAttribute(cloneObject(options));
             const items: StringMap = {};
@@ -133,7 +137,7 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
             assignEmptyValue(items, 'android:windowDrawsSystemBarBackgrounds', 'true');
             assignEmptyValue(items, 'android:statusBarColor', '@android:color/transparent');
             themeOptions.items = items;
-            Resource.addTheme(themeOptions);
+            Resource.addTheme(resourceId, themeOptions);
         }
     }
 }

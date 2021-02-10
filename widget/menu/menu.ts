@@ -1,7 +1,7 @@
 import CREATE_NODE = squared.base.lib.internal.CREATE_NODE;
 import NODE_ALIGNMENT = squared.base.lib.constant.NODE_ALIGNMENT;
 import NODE_TEMPLATE = squared.base.lib.constant.NODE_TEMPLATE;
-import EXT_ANDROID = android.internal.EXT_ANDROID;
+import EXT_ANDROID = internal.android.EXT_ANDROID;
 
 type View = android.base.View;
 
@@ -108,12 +108,14 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
                 const rootElements = this.application.getProcessing(sessionId)!.rootElements;
                 let current = element.parentElement;
                 while (current) {
-                    if (current.tagName === 'NAV' && rootElements.has(current)) {
+                    if (current.tagName === 'NAV' && rootElements.includes(current)) {
                         return false;
                     }
                     current = current.parentElement;
                 }
-                rootElements.add(element);
+                if (!rootElements.includes(element)) {
+                    rootElements.push(element);
+                }
                 return true;
             }
         }
@@ -153,6 +155,7 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
         }
         const options = createViewAttribute();
         const android = options.android;
+        const resourceId = node.localSettings.resourceId;
         const element = node.element as HTMLElement;
         let controlName: string,
             title: string;
@@ -194,14 +197,14 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
                 parseDataSet(REGEXP_ITEM, element, options);
                 if (!android.icon) {
                     const resource = this.resource as android.base.Resource<T>;
-                    let src = resource.addImageSrc(node.backgroundImage, PREFIX_MENU);
+                    let src = resource.addImageSrc(resourceId, node.backgroundImage, PREFIX_MENU);
                     if (src) {
                         android.icon = `@drawable/${src}`;
                     }
                     else {
                         const image = node.find(item => item.imageElement);
                         if (image) {
-                            src = resource.addImageSrc(image.element as HTMLImageElement, PREFIX_MENU);
+                            src = resource.addImageSrc(resourceId, image.element as HTMLImageElement, PREFIX_MENU);
                             if (src) {
                                 android.icon = `@drawable/${src}`;
                             }
@@ -212,7 +215,7 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
                 break;
         }
         if (title) {
-            android.title = Resource.addString(title, '', this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
+            android.title = Resource.addString(resourceId, title, '', this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
         }
         node.setControlType(controlName, CONTAINER_NODE.INLINE);
         node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });

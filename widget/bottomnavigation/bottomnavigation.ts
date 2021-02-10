@@ -26,15 +26,16 @@ export default class BottomNavigation<T extends android.base.View> extends squar
                 child.hide();
             });
         }, 5);
+        const resourceId = node.localSettings.resourceId;
         const controlName = node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
         node.setControlType(controlName, CONTAINER_NODE.BLOCK);
         node.exclude({ resource: NODE_RESOURCE.ASSET });
         node.render(parent);
-        node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(android.internal.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource')));
+        node.apply(Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean(internal.android.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource')));
         node.setLayoutWidth('match_parent');
         node.setLayoutHeight('wrap_content');
         node.cascade((item: T) => this.addDescendant(item));
-        this.setStyleTheme();
+        this.setStyleTheme(resourceId);
         return {
             output: {
                 type: NODE_TEMPLATE.XML,
@@ -65,10 +66,10 @@ export default class BottomNavigation<T extends android.base.View> extends squar
         }
     }
 
-    public setStyleTheme() {
+    public setStyleTheme(resourceId: number) {
         const options = createThemeAttribute(this.options.resource);
         assignEmptyValue(options, 'name', this.application.userSettings.manifestThemeName);
         assignEmptyValue(options, 'parent', 'Theme.AppCompat.Light.DarkActionBar');
-        Resource.addTheme(options);
+        Resource.addTheme(resourceId, options);
     }
 }

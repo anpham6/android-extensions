@@ -1,7 +1,7 @@
 import CREATE_NODE = squared.base.lib.internal.CREATE_NODE;
 import NODE_TEMPLATE = squared.base.lib.constant.NODE_TEMPLATE;
 import BUILD_VERSION = android.lib.constant.BUILD_VERSION;
-import EXT_ANDROID = android.internal.EXT_ANDROID;
+import EXT_ANDROID = internal.android.EXT_ANDROID;
 
 import { WIDGET_NAME } from '../lib/constant';
 
@@ -46,7 +46,10 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             if (target) {
                 const targetElement = document.getElementById(target);
                 if (targetElement && !Toolbar.includes(application.getDatasetName('use', targetElement), WIDGET_NAME.COORDINATOR)) {
-                    application.getProcessing(sessionId)!.rootElements.add(element);
+                    const rootElements = application.getProcessing(sessionId)!.rootElements;
+                    if (!rootElements.includes(element)) {
+                        rootElements.push(element);
+                    }
                 }
             }
         }
@@ -56,6 +59,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
     public processNode(node: T, parent: T) {
         const application = this.application;
         const resource = this.resource as android.base.Resource<T>;
+        const resourceId = node.localSettings.resourceId;
         const settings = application.userSettings;
         const element = node.element as HTMLElement;
         const options: StandardMap = { ...this.options[element.id.trim()] };
@@ -72,13 +76,13 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             const dataset = item.dataset;
             if (item.tagName === 'IMG') {
                 if (dataset.navigationIcon) {
-                    const src = resource.addImageSrc(item as HTMLImageElement, PREFIX_MENU);
+                    const src = resource.addImageSrc(resourceId, item as HTMLImageElement, PREFIX_MENU);
                     if (src) {
                         assignEmptyValue(app, 'navigationIcon', `@drawable/${src}`);
                     }
                 }
                 if (dataset.collapseIcon) {
-                    const src = resource.addImageSrc(item as HTMLImageElement, PREFIX_MENU);
+                    const src = resource.addImageSrc(resourceId, item as HTMLImageElement, PREFIX_MENU);
                     if (src) {
                         assignEmptyValue(app, 'collapseIcon', `@drawable/${src}`);
                     }
@@ -189,7 +193,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
         if (appBarNode) {
             appBarNode.setLayoutWidth('match_parent');
             appBarNode.setLayoutHeight('wrap_content');
-            appBarNode.apply(Resource.formatOptions(appBarOptions, numberAsResource));
+            appBarNode.apply(Resource.formatOptions(resourceId, appBarOptions, numberAsResource));
             appBarNode.render(parent);
             outputAs = {
                 type: NODE_TEMPLATE.XML,
@@ -198,7 +202,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             };
             if (collapsingToolbarNode) {
                 node.parent = collapsingToolbarNode;
-                collapsingToolbarNode.apply(Resource.formatOptions(collapsingToolbarOptions, numberAsResource));
+                collapsingToolbarNode.apply(Resource.formatOptions(resourceId, collapsingToolbarOptions, numberAsResource));
                 collapsingToolbarNode.render(appBarNode);
                 collapsingToolbarNode.setLayoutWidth('match_parent');
                 collapsingToolbarNode.setLayoutHeight('match_parent');
@@ -212,7 +216,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
                     } as NodeXmlTemplate<T>
                 );
                 if (backgroundImage) {
-                    const src = resource.addImageSrc(node.backgroundImage);
+                    const src = resource.addImageSrc(resourceId, node.backgroundImage);
                     if (src) {
                         const controller = this.controller as android.base.Controller<T>;
                         const backgroundImageOptions = createViewAttribute(options.backgroundImage);
@@ -249,7 +253,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
                                     width: 'match_parent',
                                     height: 'match_parent'
                                 },
-                                Resource.formatOptions(backgroundImageOptions, numberAsResource)
+                                Resource.formatOptions(resourceId, backgroundImageOptions, numberAsResource)
                             )
                         );
                         node.setCacheValue('backgroundImage', '');
@@ -269,7 +273,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             node.render(parent);
         }
         node.setLayoutWidth('match_parent');
-        node.apply(Resource.formatOptions(toolbarOptions, numberAsResource));
+        node.apply(Resource.formatOptions(resourceId, toolbarOptions, numberAsResource));
         const output: NodeXmlTemplate<T> = {
             type: NODE_TEMPLATE.XML,
             node,
@@ -307,6 +311,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
         }
         const themeData = node.data<ToolbarThemeData>(WIDGET_NAME.TOOLBAR, 'themeData');
         if (themeData) {
+            const resourceId = node.localSettings.resourceId;
             const options = createThemeAttribute(this.options.resource);
             const optionsActionBar = createThemeAttribute({ name: '.NoActionBar', output: options.output });
             const optionsAppBar = createThemeAttribute({ name: '.AppBarOverlay', output: options.output });
@@ -317,10 +322,10 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             assignEmptyValue(optionsActionBar.items, 'windowNoTitle', 'true');
             assignEmptyValue(optionsAppBar, 'parent', themeData.appBarOverlay || 'ThemeOverlay.AppCompat.Dark.ActionBar');
             assignEmptyValue(optionsPopup, 'parent', themeData.popupOverlay || 'ThemeOverlay.AppCompat.Light');
-            Resource.addTheme(options);
-            Resource.addTheme(optionsActionBar);
-            Resource.addTheme(optionsAppBar);
-            Resource.addTheme(optionsPopup);
+            Resource.addTheme(resourceId, options);
+            Resource.addTheme(resourceId, optionsActionBar);
+            Resource.addTheme(resourceId, optionsAppBar);
+            Resource.addTheme(resourceId, optionsPopup);
         }
         const appBar = node.data<T>(WIDGET_NAME.TOOLBAR, 'background');
         if (appBar) {

@@ -36,14 +36,15 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
     }
 
     public processNode(node: T, parent: T) {
+        const options = createViewAttribute(this.options[node.elementId]);
         const { element, target } = node;
-        const options = createViewAttribute(this.options[element!.id.trim()]);
+        const resourceId = node.localSettings.resourceId;
         const backgroundColor = node.css('backgroundColor');
         let colorName: Undef<string>;
         if (backgroundColor !== 'none') {
             const colorData = parseColor(backgroundColor);
             if (colorData) {
-                colorName = Resource.addColor(colorData);
+                colorName = Resource.addColor(resourceId, colorData);
             }
         }
         assignEmptyValue(options, 'android', 'backgroundTint', colorName ? `@color/${colorName}` : '?attr/colorAccent');
@@ -53,15 +54,15 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
         let src: Undef<string>;
         switch (element!.tagName) {
             case 'IMG':
-                src = (this.resource as android.base.Resource<T>).addImageSrc(element as HTMLImageElement, PREFIX_DIALOG);
+                src = (this.resource as android.base.Resource<T>).addImageSrc(resourceId, element as HTMLImageElement, PREFIX_DIALOG);
                 break;
             case 'INPUT':
                 if ((element as HTMLInputElement).type === 'image') {
-                    src = (this.resource as android.base.Resource<T>).addImageSrc(element as HTMLImageElement, PREFIX_DIALOG);
+                    src = (this.resource as android.base.Resource<T>).addImageSrc(resourceId, element as HTMLImageElement, PREFIX_DIALOG);
                     break;
                 }
             case 'BUTTON':
-                src = (this.resource as android.base.Resource<T>).addImageSrc(node.backgroundImage, PREFIX_DIALOG);
+                src = (this.resource as android.base.Resource<T>).addImageSrc(resourceId, node.backgroundImage, PREFIX_DIALOG);
                 break;
         }
         if (src) {
@@ -70,18 +71,18 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
         const controlName = node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.FLOATING_ACTION_BUTTON : SUPPORT_TAGNAME_X.FLOATING_ACTION_BUTTON;
         node.setControlType(controlName, CONTAINER_NODE.BUTTON);
         node.exclude({ resource: NODE_RESOURCE.BOX_STYLE | NODE_RESOURCE.ASSET });
-        Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean(android.internal.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
+        Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean(internal.android.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
         if (!node.pageFlow) {
             const offsetParent = (this.application as android.base.Application<T>).resolveTarget(node.sessionId, target) || parent;
             if (node.autoMargin.leftRight) {
                 node.mergeGravity('layout_gravity', 'center_horizontal');
             }
             else if (node.hasPX('left')) {
-                node.mergeGravity('layout_gravity', node.localizeString('left'));
+                node.mergeGravity('layout_gravity', node.localizeString('left') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_LEFT, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_LEFT, node.left));
             }
             else if (node.hasPX('right')) {
-                node.mergeGravity('layout_gravity', node.localizeString('right'));
+                node.mergeGravity('layout_gravity', node.localizeString('right') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_RIGHT, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_RIGHT, node.right));
             }
             if (node.autoMargin.topBottom) {
@@ -104,11 +105,11 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
             const horizontalBias = node.getHorizontalBias();
             const verticalBias = node.getVerticalBias();
             if (horizontalBias < 0.5) {
-                node.mergeGravity('layout_gravity', node.localizeString('left'));
+                node.mergeGravity('layout_gravity', node.localizeString('left') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_LEFT, linear.left - box.left);
             }
             else if (horizontalBias > 0.5) {
-                node.mergeGravity('layout_gravity', node.localizeString('right'));
+                node.mergeGravity('layout_gravity', node.localizeString('right') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_RIGHT, box.right - linear.right);
             }
             else {

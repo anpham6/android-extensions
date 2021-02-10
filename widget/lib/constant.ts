@@ -1,3 +1,5 @@
+/* eslint no-shadow: "off" */
+
 export const enum WIDGET_NAME {
     FAB = 'android.widget.floatingactionbutton',
     MENU = 'android.widget.menu',
