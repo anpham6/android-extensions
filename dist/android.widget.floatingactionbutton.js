@@ -1,4 +1,4 @@
-/* android.widget.floatingactionbutton 2.1.0
+/* android.widget.floatingactionbutton 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -29,41 +29,42 @@ this.android.widget.floatingactionbutton = (function () {
             return this.included(node.element);
         }
         processNode(node, parent) {
+            const options = createViewAttribute(this.options[node.elementId]);
             const { element, target } = node;
-            const options = createViewAttribute(this.options[element.id.trim()]);
+            const resourceId = node.localSettings.resourceId;
             const backgroundColor = node.css('backgroundColor');
             let colorName;
             if (backgroundColor !== 'none') {
                 const colorData = parseColor(backgroundColor);
                 if (colorData) {
-                    colorName = Resource.addColor(colorData);
+                    colorName = Resource.addColor(resourceId, colorData);
                 }
             }
             assignEmptyValue(options, 'android', 'backgroundTint', colorName ? `@color/${colorName}` : '?attr/colorAccent');
-            if (!node.hasProcedure(NODE_PROCEDURE.ACCESSIBILITY)) {
+            if (!node.hasProcedure(8 /* ACCESSIBILITY */)) {
                 assignEmptyValue(options, 'android', 'focusable', 'false');
             }
             let src;
             switch (element.tagName) {
                 case 'IMG':
-                    src = this.resource.addImageSrc(element, PREFIX_DIALOG);
+                    src = this.resource.addImageSrc(resourceId, element, PREFIX_DIALOG);
                     break;
                 case 'INPUT':
                     if (element.type === 'image') {
-                        src = this.resource.addImageSrc(element, PREFIX_DIALOG);
+                        src = this.resource.addImageSrc(resourceId, element, PREFIX_DIALOG);
                         break;
                     }
                 case 'BUTTON':
-                    src = this.resource.addImageSrc(node.backgroundImage, PREFIX_DIALOG);
+                    src = this.resource.addImageSrc(resourceId, node.backgroundImage, PREFIX_DIALOG);
                     break;
             }
             if (src) {
                 assignEmptyValue(options.app || (options.app = {}), 'srcCompat', `@drawable/${src}`);
             }
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.FLOATING_ACTION_BUTTON : SUPPORT_TAGNAME_X.FLOATING_ACTION_BUTTON;
-            node.setControlType(controlName, CONTAINER_NODE.BUTTON);
-            node.exclude({ resource: NODE_RESOURCE.BOX_STYLE | NODE_RESOURCE.ASSET });
-            Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
+            node.setControlType(controlName, 9 /* BUTTON */);
+            node.exclude({ resource: 1 /* BOX_STYLE */ | 28 /* ASSET */ });
+            Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             if (!node.pageFlow) {
                 const offsetParent = this.application.resolveTarget(node.sessionId, target) || parent;
                 if (node.autoMargin.leftRight) {
@@ -135,7 +136,7 @@ this.android.widget.floatingactionbutton = (function () {
                     node.delete('android', 'layout_gravity');
                 }
                 node.app('layout_anchor', anchor);
-                node.exclude({ procedure: NODE_PROCEDURE.ALIGNMENT });
+                node.exclude({ procedure: 4 /* ALIGNMENT */ });
             }
             node.render(parent);
             node.apply(options);

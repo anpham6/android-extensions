@@ -1,4 +1,4 @@
-/* android.widget.coordinator 2.1.0
+/* android.widget.coordinator 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -15,7 +15,7 @@ this.android.widget.coordinator = (function () {
         processNode(node, parent) {
             var _a;
             const options = createViewAttribute(this.options[node.elementId]);
-            Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
+            Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             const element = Coordinator.findNestedElement(node, "android.widget.toolbar" /* TOOLBAR */);
             if (element) {
                 const toolbar = getElementAsNode(element, node.sessionId);
@@ -27,8 +27,8 @@ this.android.widget.coordinator = (function () {
                 }
             }
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.COORDINATOR : SUPPORT_TAGNAME_X.COORDINATOR;
-            node.setControlType(controlName, CONTAINER_NODE.BLOCK);
-            node.exclude({ resource: NODE_RESOURCE.ASSET });
+            node.setControlType(controlName, 14 /* BLOCK */);
+            node.exclude({ resource: 28 /* ASSET */ });
             node.render(parent);
             node.renderExclude = false;
             return {

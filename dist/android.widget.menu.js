@@ -1,4 +1,4 @@
-/* android.widget.menu 2.1.0
+/* android.widget.menu 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -95,12 +95,14 @@ this.android.widget.menu = (function () {
                     const rootElements = this.application.getProcessing(sessionId).rootElements;
                     let current = element.parentElement;
                     while (current) {
-                        if (current.tagName === 'NAV' && rootElements.has(current)) {
+                        if (current.tagName === 'NAV' && rootElements.includes(current)) {
                             return false;
                         }
                         current = current.parentElement;
                     }
-                    rootElements.add(element);
+                    if (!rootElements.includes(element)) {
+                        rootElements.push(element);
+                    }
                     return true;
                 }
             }
@@ -114,9 +116,9 @@ this.android.widget.menu = (function () {
             outerParent.childIndex = node.childIndex;
             outerParent.actualParent = parent.actualParent;
             node.documentRoot = true;
-            node.setControlType(NAVIGATION.MENU, CONTAINER_NODE.INLINE);
+            node.setControlType(NAVIGATION.MENU, 11 /* INLINE */);
             node.addAlign(2 /* AUTO_LAYOUT */);
-            node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });
+            node.exclude({ resource: 31 /* ALL */, procedure: 63 /* ALL */ });
             node.render(outerParent);
             node.cascade((item) => this.addDescendant(item));
             node.dataset['pathname' + capitalize(this.application.systemName)] = appendSeparator(this.controller.userSettings.outputDirectory, 'res/menu');
@@ -137,6 +139,7 @@ this.android.widget.menu = (function () {
             }
             const options = createViewAttribute();
             const android = options.android;
+            const resourceId = node.localSettings.resourceId;
             const element = node.element;
             let controlName, title;
             if (node.tagName === 'NAV') {
@@ -177,14 +180,14 @@ this.android.widget.menu = (function () {
                     parseDataSet(REGEXP_ITEM, element, options);
                     if (!android.icon) {
                         const resource = this.resource;
-                        let src = resource.addImageSrc(node.backgroundImage, PREFIX_MENU);
+                        let src = resource.addImageSrc(resourceId, node.backgroundImage, PREFIX_MENU);
                         if (src) {
                             android.icon = `@drawable/${src}`;
                         }
                         else {
                             const image = node.find(item => item.imageElement);
                             if (image) {
-                                src = resource.addImageSrc(image.element, PREFIX_MENU);
+                                src = resource.addImageSrc(resourceId, image.element, PREFIX_MENU);
                                 if (src) {
                                     android.icon = `@drawable/${src}`;
                                 }
@@ -195,10 +198,10 @@ this.android.widget.menu = (function () {
                     break;
             }
             if (title) {
-                android.title = Resource.addString(title, '', this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
+                android.title = Resource.addString(resourceId, title, '', this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             }
-            node.setControlType(controlName, CONTAINER_NODE.INLINE);
-            node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });
+            node.setControlType(controlName, 11 /* INLINE */);
+            node.exclude({ resource: 31 /* ALL */, procedure: 63 /* ALL */ });
             node.render(parent);
             node.apply(options);
             return {

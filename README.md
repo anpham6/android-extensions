@@ -1,4 +1,4 @@
-# android-extensions 2.2
+# android-extensions 2.4
 
 ```javascript
 <script src="/dist/extensions/android.widget.coordinator.min.js"></script>
@@ -20,8 +20,6 @@
     });
 </script>
 ```
-
-See /android/widget/*.html for usage instructions in the squared-apache <https://github.com/anpham6/squared-apache> project.
 
 * android.external
 * android.substitute

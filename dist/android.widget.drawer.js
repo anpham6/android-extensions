@@ -1,4 +1,4 @@
-/* android.widget.drawer 2.1.0
+/* android.widget.drawer 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -30,16 +30,20 @@ this.android.widget.drawer = (function () {
                         }
                     }
                 });
-                application.getProcessing(sessionId).rootElements.add(element);
+                const rootElements = application.getProcessing(sessionId).rootElements;
+                if (!rootElements.includes(element)) {
+                    rootElements.push(element);
+                }
                 return true;
             }
             return false;
         }
         processNode(node, parent) {
             const options = createViewAttribute(this.options.self);
+            const resourceId = node.localSettings.resourceId;
             if (Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) {
                 assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
-                this.setStyleTheme(node.api);
+                this.setStyleTheme(resourceId, node.api);
             }
             else {
                 const navigationViewOptions = createViewAttribute(this.options.navigationView);
@@ -52,9 +56,9 @@ this.android.widget.drawer = (function () {
             node.documentRoot = true;
             node.renderExclude = false;
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.DRAWER : SUPPORT_TAGNAME_X.DRAWER;
-            node.setControlType(controlName, CONTAINER_NODE.BLOCK);
-            node.exclude({ resource: NODE_RESOURCE.FONT_STYLE });
-            node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
+            node.setControlType(controlName, 14 /* BLOCK */);
+            node.exclude({ resource: 4 /* FONT_STYLE */ });
+            node.apply(Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
             node.render(parent);
             node.setLayoutWidth('match_parent');
             node.setLayoutHeight('match_parent');
@@ -93,7 +97,7 @@ this.android.widget.drawer = (function () {
                             controlName: node.api < 29 /* Q */ ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
                             width: 'wrap_content',
                             height: 'match_parent'
-                        }, Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'))));
+                        }, Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'))));
                     }
                 }
             }
@@ -105,13 +109,13 @@ this.android.widget.drawer = (function () {
                 }
             }
         }
-        setStyleTheme(api) {
+        setStyleTheme(resourceId, api) {
             const settings = this.application.userSettings;
             const options = createThemeAttribute(this.options.resource);
             assignEmptyValue(options, 'name', settings.manifestThemeName);
             assignEmptyValue(options, 'parent', settings.manifestParentThemeName);
             assignEmptyValue(options.items, 'android:windowTranslucentStatus', 'true');
-            Resource.addTheme(options);
+            Resource.addTheme(resourceId, options);
             if (api >= 21 /* LOLLIPOP */) {
                 const themeOptions = createThemeAttribute(cloneObject(options));
                 const items = {};
@@ -119,7 +123,7 @@ this.android.widget.drawer = (function () {
                 assignEmptyValue(items, 'android:windowDrawsSystemBarBackgrounds', 'true');
                 assignEmptyValue(items, 'android:statusBarColor', '@android:color/transparent');
                 themeOptions.items = items;
-                Resource.addTheme(themeOptions);
+                Resource.addTheme(resourceId, themeOptions);
             }
         }
     }

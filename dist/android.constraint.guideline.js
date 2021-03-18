@@ -1,4 +1,4 @@
-/* android.constraint.guideline 2.1.0
+/* android.constraint.guideline 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -26,7 +26,7 @@ this.android.constraint.guideline = (function () {
         }
         processNode(node, parent) {
             return {
-                output: this.application.renderNode(new LayoutUI(parent, node, CONTAINER_NODE.CONSTRAINT, 16 /* ABSOLUTE */))
+                output: this.application.renderNode(new LayoutUI(parent, node, 19 /* CONSTRAINT */, 16 /* ABSOLUTE */))
             };
         }
         postBaseLayout(node) {

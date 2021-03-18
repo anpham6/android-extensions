@@ -1,4 +1,4 @@
-/* android.widget.bottomnavigation 2.1.0
+/* android.widget.bottomnavigation 2.4.0
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -25,15 +25,16 @@ this.android.widget.bottomnavigation = (function () {
                     child.hide();
                 });
             }, 5);
+            const resourceId = node.localSettings.resourceId;
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
-            node.setControlType(controlName, CONTAINER_NODE.BLOCK);
-            node.exclude({ resource: NODE_RESOURCE.ASSET });
+            node.setControlType(controlName, 14 /* BLOCK */);
+            node.exclude({ resource: 28 /* ASSET */ });
             node.render(parent);
-            node.apply(Resource.formatOptions(options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
+            node.apply(Resource.formatOptions(resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource')));
             node.setLayoutWidth('match_parent');
             node.setLayoutHeight('wrap_content');
             node.cascade((item) => this.addDescendant(item));
-            this.setStyleTheme();
+            this.setStyleTheme(resourceId);
             return {
                 output: {
                     type: 1 /* XML */,
@@ -63,11 +64,11 @@ this.android.widget.bottomnavigation = (function () {
                 node.app('menu', app.menu);
             }
         }
-        setStyleTheme() {
+        setStyleTheme(resourceId) {
             const options = createThemeAttribute(this.options.resource);
             assignEmptyValue(options, 'name', this.application.userSettings.manifestThemeName);
             assignEmptyValue(options, 'parent', 'Theme.AppCompat.Light.DarkActionBar');
-            Resource.addTheme(options);
+            Resource.addTheme(resourceId, options);
         }
     }
 
