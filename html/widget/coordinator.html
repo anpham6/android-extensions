@@ -55,38 +55,31 @@
     <script src="/common/system.js"></script>
     <script src="/common/transform.js"></script>
     <script src="/common/babel-transform.js"></script>
+    <script src="/dist/squared.js"></script>
+    <script src="/dist/squared.base.js"></script>
+    <script src="/dist/squared.svg.js"></script>
+    <script src="/dist/android.framework.js"></script>
     <script>
-        var squared = {};
-        var android = null;
-        System.import('/build/src/main.js').then(result => {
-            squared = result;
-            System.import('/build/src/base/main.js').then(result => {
-                squared.base = result;
-                System.import('/build/framework/android/src/main.js').then(result => {
-                    android = result.default;
-                    squared.setFramework(android);
-                    Promise.all([
-                        System.import('/build/extension/android/widget/coordinator/main.js'),
-                        System.import('/build/extension/android/widget/floatingactionbutton/main.js')
-                    ]).then(() => {
-                        squared.parseDocument('squared_ui').then(function() {
-                            squared.settings.outputEmptyCopyDirectory = true;
-                            squared.copyTo('D:/git/coordinator', {
-                                assets: [
-                                    {
-                                        pathname: 'app/src/main/res/drawable',
-                                        filename: 'ic_launcher_background.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
-                                    },
-                                    {
-                                        pathname: 'app/src/main/res/drawable-v24',
-                                        filename: 'ic_launcher_foreground.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
-                                    }
-                                ]
-                            });
-                        });
-                    });
+        Promise.all([
+            System.import('/build/widget/coordinator/main.js'),
+            System.import('/build/widget/floatingactionbutton/main.js')
+        ]).then(() => {
+            squared.setFramework(android);
+            squared.parseDocument('squared_ui').then(function() {
+                squared.settings.outputEmptyCopyDirectory = true;
+                squared.copyTo('D:/git/coordinator', {
+                    assets: [
+                        {
+                            pathname: 'app/src/main/res/drawable',
+                            filename: 'ic_launcher_background.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
+                        },
+                        {
+                            pathname: 'app/src/main/res/drawable-v24',
+                            filename: 'ic_launcher_foreground.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
+                        }
+                    ]
                 });
             });
         });

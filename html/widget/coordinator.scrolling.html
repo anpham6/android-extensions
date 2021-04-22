@@ -70,74 +70,67 @@
     <script src="/common/system.js"></script>
     <script src="/common/transform.js"></script>
     <script src="/common/babel-transform.js"></script>
+    <script src="/dist/squared.js"></script>
+    <script src="/dist/squared.base.js"></script>
+    <script src="/dist/squared.svg.js"></script>
+    <script src="/dist/android.framework.js"></script>
     <script>
-        var squared = {};
-        var android = null;
-        System.import('/build/src/main.js').then(result => {
-            squared = result;
-            System.import('/build/src/base/main.js').then(result => {
-                squared.base = result;
-                System.import('/build/framework/android/src/main.js').then(result => {
-                    android = result.default;
-                    squared.setFramework(android);
-                    Promise.all([
-                        System.import('/build/extension/android/widget/coordinator/main.js'),
-                        System.import('/build/extension/android/widget/floatingactionbutton/main.js'),
-                        System.import('/build/extension/android/widget/menu/main.js'),
-                        System.import('/build/extension/android/widget/toolbar/main.js')
-                    ]).then(() => {
-                        squared.add('android.substitute');
-                        squared.apply('android.widget.toolbar', {
-                            element: {
-                                toolbar_demo: {
-                                    self: {
-                                        app: {
-                                            popupTheme: 'ThemeOverlay.AppCompat.Light'
-                                        }
-                                    },
-                                    appBar: {
-                                        android: {
-                                            theme: 'ThemeOverlay.AppCompat.Dark.ActionBar'
-                                        }
-                                    },
-                                    collapsingToolbar: {},
-                                    backgroundImage: {
-                                        app: {
-                                            layout_collapseMode: 'parallax'
-                                        }
-                                    }
-                                }
-                            },
-                            resource: {
-                                output: {
-                                    pathname: 'res/values',
-                                    filename: 'android.widget.toolbar.xml'
-                                },
-                                name: 'AppTheme',
-                                parent: 'Theme.AppCompat.Light.DarkActionBar',
-                                items: {
-                                    colorPrimary: '#343434'
-                                }
+        Promise.all([
+            System.import('/build/widget/coordinator/main.js'),
+            System.import('/build/widget/floatingactionbutton/main.js'),
+            System.import('/build/widget/menu/main.js'),
+            System.import('/build/widget/toolbar/main.js')
+        ]).then(() => {
+            squared.setFramework(android);
+            squared.add('android.substitute');
+            squared.apply('android.widget.toolbar', {
+                element: {
+                    toolbar_demo: {
+                        self: {
+                            app: {
+                                popupTheme: 'ThemeOverlay.AppCompat.Light'
                             }
-                        });
-                        squared.parseDocument('squared_ui').then(function() {
-                            squared.settings.outputEmptyCopyDirectory = true;
-                            squared.copyTo('D:/git/coordinatorscrolling', {
-                                assets: [
-                                    {
-                                        pathname: 'app/src/main/res/drawable',
-                                        filename: 'ic_launcher_background.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
-                                    },
-                                    {
-                                        pathname: 'app/src/main/res/drawable-v24',
-                                        filename: 'ic_launcher_foreground.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
-                                    }
-                                ]
-                            });
-                        });
-                    });
+                        },
+                        appBar: {
+                            android: {
+                                theme: 'ThemeOverlay.AppCompat.Dark.ActionBar'
+                            }
+                        },
+                        collapsingToolbar: {},
+                        backgroundImage: {
+                            app: {
+                                layout_collapseMode: 'parallax'
+                            }
+                        }
+                    }
+                },
+                resource: {
+                    output: {
+                        pathname: 'res/values',
+                        filename: 'android.widget.toolbar.xml'
+                    },
+                    name: 'AppTheme',
+                    parent: 'Theme.AppCompat.Light.DarkActionBar',
+                    items: {
+                        colorPrimary: '#343434'
+                    }
+                }
+            });
+            squared.parseDocument('squared_ui').then(function() {
+                squared.settings.outputEmptyCopyDirectory = true;
+                squared.copyTo('D:/git/coordinatorscrolling', {
+                    assets: [
+                        {
+                            pathname: 'app/src/main/res/drawable',
+                            filename: 'ic_launcher_background.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
+                        },
+                        {
+                            pathname: 'app/src/main/res/drawable-v24',
+                            filename: 'ic_launcher_foreground.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
+                        }
+                    ]
                 });
             });
         });

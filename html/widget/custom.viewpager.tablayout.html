@@ -31,7 +31,7 @@
             padding: 0;
         }
         #toolbar_demo {
-            background-image: url(/common/images/android_header.jpg);
+            background-image: url(/common/images/android_background.jpg);
             background-size: 100% 100%;
             overflow: hidden;
         }
@@ -61,64 +61,83 @@
             background-color: #aaa;
             padding: 8px;
         }
+        ul {
+            font-size: 0;
+            text-align: justify;
+            margin: 0;
+            padding: 0;
+            background-color: slateblue;
+            opacity: 0.7;
+            clear: right;
+        }
+        ul:after {
+            content: '';
+            display: inline-block;
+            width: 100%;
+        }
+        li:first-child {
+            padding-left: 40px;
+        }
+        li:last-child {
+            padding-right: 40px;
+        }
+        li {
+            font-size: 11px;
+            color: white;
+            margin: 0;
+            padding: 8px;
+            display: inline-block;
+        }
     </style>
     <script src="/common/system.js"></script>
     <script src="/common/transform.js"></script>
     <script src="/common/babel-transform.js"></script>
+    <script src="/dist/squared.js"></script>
+    <script src="/dist/squared.base.js"></script>
+    <script src="/dist/squared.svg.js"></script>
+    <script src="/dist/android.framework.js"></script>
     <script>
-        var squared = {};
-        var android = null;
-        System.import('/build/src/main.js').then(result => {
-            squared = result;
-            System.import('/build/src/base/main.js').then(result => {
-                squared.base = result;
-                System.import('/build/framework/android/src/main.js').then(result => {
-                    android = result.default;
-                    squared.setFramework(android);
-                    squared.settings.exclusionsDisabled = false;
-                    Promise.all([
-                        System.import('/build/extension/android/widget/coordinator/main.js'),
-                        System.import('/build/extension/android/widget/floatingactionbutton/main.js'),
-                        System.import('/build/extension/android/widget/menu/main.js'),
-                        System.import('/build/extension/android/widget/toolbar/main.js')
-                    ]).then(() => {
-                        squared.apply('android.widget.toolbar', {
-                            element: {
-                                toolbar_demo: {
-                                    appBar: {}
-                                }
-                            }
-                        });
-                        squared.add('android.substitute', {
-                            element: {
-                                viewpager_demo: {
-                                    android: {
-                                        layout_height: 'match_parent'
-                                    },
-                                    app: {
-                                        layout_behavior: '@string/appbar_scrolling_view_behavior'
-                                    }
-                                }
-                            }
-                        });
-                        squared.parseDocument('squared_ui').then(function() {
-                            squared.settings.outputEmptyCopyDirectory = true;
-                            squared.copyTo('D:/git/customviewpager', {
-                                assets: [
-                                    {
-                                        pathname: 'app/src/main/res/drawable',
-                                        filename: 'ic_launcher_background.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
-                                    },
-                                    {
-                                        pathname: 'app/src/main/res/drawable-v24',
-                                        filename: 'ic_launcher_foreground.xml',
-                                        uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
-                                    }
-                                ]
-                            });
-                        });
-                    });
+        Promise.all([
+            System.import('/build/widget/coordinator/main.js'),
+            System.import('/build/widget/floatingactionbutton/main.js'),
+            System.import('/build/widget/menu/main.js'),
+            System.import('/build/widget/toolbar/main.js')
+        ]).then(() => {
+            squared.setFramework(android);
+            squared.apply('android.widget.toolbar', {
+                element: {
+                    toolbar_demo: {
+                        appBar: {}
+                    }
+                }
+            });
+            squared.add('android.substitute', {
+                element: {
+                    viewpager_demo: {
+                        android: {
+                            layout_height: 'match_parent'
+                        },
+                        app: {
+                            layout_behavior: '@string/appbar_scrolling_view_behavior'
+                        }
+                    }
+                }
+            });
+            squared.parseDocument('squared_ui').then(function() {
+                squared.settings.outputEmptyCopyDirectory = true;
+                squared.copyTo('D:/git/customviewpagertablayout', {
+                    assets: [
+                        {
+                            pathname: 'app/src/main/res/drawable',
+                            filename: 'ic_launcher_background.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_background.xml'
+                        },
+                        {
+                            pathname: 'app/src/main/res/drawable-v24',
+                            filename: 'ic_launcher_foreground.xml',
+                            uri: 'C:/Users/An/git/squared/html/common/images/ic_launcher_foreground.xml'
+                        }
+                    ]
                 });
             });
         });
@@ -140,12 +159,22 @@
                     <img src="/common/images/icons8-browse-page-24.png" />
                 </div>
             </nav>
+            <ul data-use-android="android.substitute"
+                data-exclude-resource-child-android="BOX_STYLE | BOX_SPACING | FONT_STYLE"
+                data-android-substitute-tag="com.google.android.material.tabs.TabLayout"
+                data-android-substitute-tag-child="com.google.android.material.tabs.TabItem"
+                data-android-target-module="appBar">
+                <li>TAB 1</li>
+                <li>TAB 2</li>
+                <li>TAB 3</li>
+            </ul>
         </div>
         <div id="viewpager_demo"
             data-use-android="android.substitute"
             data-android-substitute-tag="androidx.viewpager2.widget.ViewPager2"
             data-android-attr-app="layout_behavior::@string/appbar_scrolling_view_behavior"
-            data-exclude-resource="BOX_STYLE | FONT_STYLE">
+            data-exclude-section-android="DOM_TRAVERSE"
+            data-exclude-resource-android="BOX_STYLE | FONT_STYLE">
             <div style="padding: 20px;" data-use-android="android.external" data-filename-android="fragment_main.xml">
                 <h3>title</h3>
                 <h4 style="text-align: center;">page</h4>

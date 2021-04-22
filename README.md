@@ -1,9 +1,11 @@
 # android-extensions 3.0
 
+Examples can be found in the "html/widget" directory.
+
 ```javascript
-<script src="/dist/extensions/android.widget.coordinator.min.js"></script>
-<script src="/dist/extensions/android.widget.menu.min.js"></script>
-<script src="/dist/extensions/android.widget.toolbar.min.js"></script>
+<script src="/dist/android.widget.coordinator.min.js"></script>
+<script src="/dist/android.widget.menu.min.js"></script>
+<script src="/dist/android.widget.toolbar.min.js"></script>
 <script>
     // Configure an extension (optional)
     squared.apply('android.widget.toolbar', {
