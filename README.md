@@ -1,4 +1,4 @@
-# android-extensions 2.4
+# android-extensions 3.0
 
 ```javascript
 <script src="/dist/extensions/android.widget.coordinator.min.js"></script>
@@ -7,8 +7,11 @@
 <script>
     // Configure an extension (optional)
     squared.apply('android.widget.toolbar', {
-        settings: {
-            'elementId': { // HTML DOM
+        element: {
+            "toolbar-id": { // HTML DOM
+                android: {
+                    background: "?android:attr/windowBackground"
+                },
                 appBar: {
                     android: {
                         theme: '@style/ThemeOverlay.AppCompat.Dark.ActionBar'
@@ -16,8 +19,11 @@
                 }
             }
         },
-        saveAs: 'toolbar-example' // optional
+        'toolbar-example' // Save to Local Storage (optional)
     });
+
+    // Load from Local Storage
+    squared.apply('android.widget.toolbar', 'toolbar-example');
 </script>
 ```
 

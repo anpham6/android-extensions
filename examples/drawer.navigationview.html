@@ -102,27 +102,25 @@
                         System.import('/build/extension/android/widget/drawer/main.js')
                     ]).then(() => {
                         squared.apply('android.widget.drawer', {
-                            settings: {
-                                self: {
-                                    android: {
-                                        fitsSystemWindows: 'true'
-                                    }
-                                },
-                                navigationView: {
-                                    android: {
-                                        fitsSystemWindows: 'true'
-                                    }
-                                },
-                                resource: {
-                                    parent: 'Theme.AppCompat.Light.NoActionBar',
-                                    items: {
-                                        colorPrimary: '@color/slateblue'
-                                    }
+                            self: {
+                                android: {
+                                    fitsSystemWindows: 'true'
+                                }
+                            },
+                            navigationView: {
+                                android: {
+                                    fitsSystemWindows: 'true'
+                                }
+                            },
+                            resource: {
+                                parent: 'Theme.AppCompat.Light.NoActionBar',
+                                items: {
+                                    colorPrimary: '@color/slateblue'
                                 }
                             }
                         });
                         squared.apply('android.widget.toolbar', {
-                            settings: {
+                            element: {
                                 toolbar_demo: {
                                     appBar: {
                                         android: {

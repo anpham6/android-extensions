@@ -1,6 +1,4 @@
 import { terser_options } from '../../squared/config/rollup-options';
-import { version } from './package.json';
-
 import { terser } from 'rollup-plugin-terser'
 
 export default [
@@ -23,7 +21,7 @@ export default [
             file: './dist/android.constraint.guideline.js',
             name: 'android.constraint.guideline',
             format: 'iife',
-            banner: `/* android.constraint.guideline ${version}\n   https://github.com/anpham6/squared */\n`
+            banner: `/* android.constraint.guideline\n   https://github.com/anpham6/squared */\n`
         },
         plugins: []
     }

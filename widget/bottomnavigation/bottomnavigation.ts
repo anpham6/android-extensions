@@ -3,13 +3,15 @@ import BUILD_VERSION = android.lib.constant.BUILD_VERSION;
 
 import { WIDGET_NAME } from '../lib/constant';
 
+const Resource = android.base.Resource;
+
 const { NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
 
-const { assignEmptyValue, capitalize, iterateArray } = squared.lib.util;
-const { createThemeAttribute, createViewAttribute } = android.lib.util;
+const { capitalize, iterateArray } = squared.lib.util;
+const { createThemeAttribute, createViewOptions, removeFileExtension } = android.lib.util;
 
-const Resource = android.base.Resource;
+const { assignEmptyValue } = squared.base.lib.util;
 
 export default class BottomNavigation<T extends android.base.View> extends squared.base.ExtensionUI<T> {
     constructor(name: string, framework: number, options?: ExtensionUIOptions) {
@@ -18,13 +20,11 @@ export default class BottomNavigation<T extends android.base.View> extends squar
     }
 
     public processNode(node: T, parent: T) {
-        const options = createViewAttribute(this.options[node.elementId]);
+        const options = createViewOptions(this.options, node.elementId);
         assignEmptyValue(options, 'android', 'background', '?android:attr/windowBackground');
         iterateArray(node.children, (item: T) => {
             item.hide();
-            item.cascade((child: T) => {
-                child.hide();
-            });
+            item.cascade((child: T) => child.hide());
         }, 5);
         const resourceId = node.localSettings.resourceId;
         const controlName = node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
@@ -57,11 +57,11 @@ export default class BottomNavigation<T extends android.base.View> extends squar
                 renderParent.setLayoutHeight('match_parent');
             }
         }
-        const menu = BottomNavigation.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['layoutName' + capitalize(this.application.systemName)];
+        const menu = BottomNavigation.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['filename' + capitalize(this.application.systemName)];
         if (menu) {
-            const options = createViewAttribute(this.options[node.elementId]);
+            const options = createViewOptions(this.options, node.elementId);
             const app = options.app ||= {};
-            assignEmptyValue(app, 'menu', `@menu/${menu}`);
+            assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
             node.app('menu', app.menu);
         }
     }

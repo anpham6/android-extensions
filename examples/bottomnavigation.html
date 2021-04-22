@@ -71,7 +71,7 @@
                             System.import('/build/extension/android/widget/bottomnavigation/main.js')
                         ]).then(() => {
                             squared.apply('android.widget.bottomnavigation', {
-                                settings: {
+                                element: {
                                     bottomnavigation_demo: {
                                         android: {
                                             background: '?android:attr/windowBackground'
@@ -80,10 +80,10 @@
                                             itemIconTint: '#000000',
                                             itemTextColor: '#000000'
                                         }
-                                    },
-                                    resource: {
-                                        parent: 'Theme.AppCompat.Light.NoActionBar'
                                     }
+                                },
+                                resource: {
+                                    parent: 'Theme.AppCompat.Light.NoActionBar'
                                 }
                             });
                             squared.parseDocument('squared_ui').then(function() {

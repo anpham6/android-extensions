@@ -83,19 +83,21 @@
                         System.import('/build/extension/android/widget/toolbar/main.js')
                     ]).then(() => {
                         squared.apply('android.widget.toolbar', {
-                            settings: {
+                            element: {
                                 toolbar_demo: {
                                     appBar: {}
                                 }
                             }
                         });
                         squared.add('android.substitute', {
-                            viewpager_demo: {
-                                android: {
-                                    layout_height: 'match_parent'
-                                },
-                                app: {
-                                    layout_behavior: '@string/appbar_scrolling_view_behavior'
+                            element: {
+                                viewpager_demo: {
+                                    android: {
+                                        layout_height: 'match_parent'
+                                    },
+                                    app: {
+                                        layout_behavior: '@string/appbar_scrolling_view_behavior'
+                                    }
                                 }
                             }
                         });

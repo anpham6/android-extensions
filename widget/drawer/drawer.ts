@@ -6,13 +6,15 @@ import { WIDGET_NAME } from '../lib/constant';
 
 type View = android.base.View;
 
+const Resource = android.base.Resource;
+
 const { NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
 
-const { assignEmptyValue, cloneObject, iterateArray } = squared.lib.util;
-const { createThemeAttribute, createViewAttribute } = android.lib.util;
+const { cloneObject, iterateArray } = squared.lib.util;
+const { createThemeAttribute, createViewAttribute, removeFileExtension } = android.lib.util;
 
-const Resource = android.base.Resource;
+const { assignEmptyValue } = squared.base.lib.util;
 
 export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> {
     public readonly documentBase = true;
@@ -35,10 +37,7 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
                     }
                 }
             });
-            const rootElements = application.getProcessing(sessionId)!.rootElements;
-            if (!rootElements.includes(element)) {
-                rootElements.push(element);
-            }
+            application.addRootElement(sessionId, element);
             return true;
         }
         return false;
@@ -85,14 +84,14 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
             if (node.sessionId === sessionId) {
                 const systemName = node.localSettings.systemName;
                 const options = createViewAttribute(this.options.navigationView);
-                const menu = Drawer.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['layoutName' + systemName];
-                const headerLayout = Drawer.findNestedElement(node, EXT_ANDROID.EXTERNAL)?.dataset['layoutName' + systemName];
+                const menu = Drawer.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['filename' + systemName];
+                const headerLayout = Drawer.findNestedElement(node, EXT_ANDROID.EXTERNAL)?.dataset['filename' + systemName];
                 const app = options.app ||= {};
                 if (menu) {
-                    assignEmptyValue(app, 'menu', `@menu/${menu}`);
+                    assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
                 }
                 if (headerLayout) {
-                    assignEmptyValue(app, 'headerLayout', `@layout/${headerLayout}`);
+                    assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
                 }
                 if (menu || headerLayout) {
                     const controller = this.controller as android.base.Controller<T>;
@@ -102,6 +101,7 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
                     controller.addAfterInsideTemplate(
                         node,
                         controller.renderNodeStatic(
+                            node.sessionId,
                             {
                                 controlName: node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
                                 width: 'wrap_content',
@@ -124,16 +124,16 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
     }
 
     public setStyleTheme(resourceId: number, api: number) {
-        const settings = this.application.userSettings;
+        const { manifestThemeName, manifestParentThemeName } = this.application.userSettings;
         const options = createThemeAttribute(this.options.resource);
-        assignEmptyValue(options, 'name', settings.manifestThemeName);
-        assignEmptyValue(options, 'parent', settings.manifestParentThemeName);
+        assignEmptyValue(options, 'name', manifestThemeName);
+        assignEmptyValue(options, 'parent', manifestParentThemeName);
         assignEmptyValue(options.items, 'android:windowTranslucentStatus', 'true');
         Resource.addTheme(resourceId, options);
         if (api >= BUILD_VERSION.LOLLIPOP) {
             const themeOptions = createThemeAttribute(cloneObject(options));
             const items: StringMap = {};
-            assignEmptyValue(themeOptions.output, 'path', 'res/values-v21');
+            assignEmptyValue(themeOptions.output ||= {}, 'pathname', 'res/values-v21');
             assignEmptyValue(items, 'android:windowDrawsSystemBarBackgrounds', 'true');
             assignEmptyValue(items, 'android:statusBarColor', '@android:color/transparent');
             themeOptions.items = items;

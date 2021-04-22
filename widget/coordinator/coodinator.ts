@@ -5,17 +5,17 @@ import { WIDGET_NAME } from '../lib/constant';
 
 type View = android.base.View;
 
+const Resource = android.base.Resource;
+
 const { NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
 
 const { getElementAsNode } = squared.lib.session;
-const { createViewAttribute } = android.lib.util;
-
-const Resource = android.base.Resource;
+const { createViewOptions } = android.lib.util;
 
 export default class Coordinator<T extends View> extends squared.base.ExtensionUI<T> {
     public processNode(node: T, parent: T) {
-        const options = createViewAttribute(this.options[node.elementId]);
+        const options = createViewOptions(this.options, node.elementId);
         Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean(internal.android.EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'));
         const element = Coordinator.findNestedElement(node, WIDGET_NAME.TOOLBAR);
         if (element) {

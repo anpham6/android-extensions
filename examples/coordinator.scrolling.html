@@ -88,7 +88,7 @@
                     ]).then(() => {
                         squared.add('android.substitute');
                         squared.apply('android.widget.toolbar', {
-                            settings: {
+                            element: {
                                 toolbar_demo: {
                                     self: {
                                         app: {
@@ -106,17 +106,17 @@
                                             layout_collapseMode: 'parallax'
                                         }
                                     }
+                                }
+                            },
+                            resource: {
+                                output: {
+                                    pathname: 'res/values',
+                                    filename: 'android.widget.toolbar.xml'
                                 },
-                                resource: {
-                                    output: {
-                                        pathname: 'res/values',
-                                        filename: 'android.widget.toolbar.xml'
-                                    },
-                                    name: 'AppTheme',
-                                    parent: 'Theme.AppCompat.Light.DarkActionBar',
-                                    items: {
-                                        colorPrimary: '#343434'
-                                    }
+                                name: 'AppTheme',
+                                parent: 'Theme.AppCompat.Light.DarkActionBar',
+                                items: {
+                                    colorPrimary: '#343434'
                                 }
                             }
                         });

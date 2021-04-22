@@ -6,13 +6,14 @@ import { WIDGET_NAME } from '../lib/constant';
 
 type View = android.base.View;
 
+const Resource = android.base.Resource;
+
 const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
 
-const { assignEmptyValue } = squared.lib.util;
-const { createViewAttribute, parseColor } = android.lib.util;
+const { createViewOptions, parseColor } = android.lib.util;
 
-const Resource = android.base.Resource;
+const { assignEmptyValue } = squared.base.lib.util;
 
 const SUPPORTED_INPUT = [
     'button',
@@ -36,7 +37,7 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
     }
 
     public processNode(node: T, parent: T) {
-        const options = createViewAttribute(this.options[node.elementId]);
+        const options = createViewOptions(this.options, node.elementId);
         const { element, target } = node;
         const resourceId = node.localSettings.resourceId;
         const backgroundColor = node.css('backgroundColor');
@@ -77,23 +78,23 @@ export default class FloatingActionButton<T extends View> extends squared.base.E
             if (node.autoMargin.leftRight) {
                 node.mergeGravity('layout_gravity', 'center_horizontal');
             }
-            else if (node.hasPX('left')) {
+            else if (node.hasUnit('left')) {
                 node.mergeGravity('layout_gravity', node.localizeString('left') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_LEFT, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_LEFT, node.left));
             }
-            else if (node.hasPX('right')) {
+            else if (node.hasUnit('right')) {
                 node.mergeGravity('layout_gravity', node.localizeString('right') as LayoutGravityDirectionAttr);
                 node.modifyBox(BOX_STANDARD.MARGIN_RIGHT, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_RIGHT, node.right));
             }
             if (node.autoMargin.topBottom) {
                 node.mergeGravity('layout_gravity', 'center_vertical');
             }
-            else if (node.hasPX('top')) {
+            else if (node.hasUnit('top')) {
                 node.app('layout_dodgeInsetEdges', 'top');
                 node.mergeGravity('layout_gravity', 'top');
                 node.modifyBox(BOX_STANDARD.MARGIN_TOP, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_TOP, node.top));
             }
-            else if (node.hasPX('bottom')) {
+            else if (node.hasUnit('bottom')) {
                 node.mergeGravity('layout_gravity', 'bottom');
                 node.modifyBox(BOX_STANDARD.MARGIN_BOTTOM, offsetParent.getAbsolutePaddingOffset(BOX_STANDARD.PADDING_BOTTOM, node.bottom));
             }

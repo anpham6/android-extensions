@@ -5,15 +5,15 @@ import EXT_ANDROID = internal.android.EXT_ANDROID;
 
 type View = android.base.View;
 
+const Application = squared.base.Application;
+const Resource = android.base.Resource;
+
 const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_NODE } = android.lib.constant;
 
-const { capitalize, sameArray } = squared.lib.util;
 const { createViewAttribute } = android.lib.util;
 
 const { appendSeparator } = squared.base.lib.util;
-
-const Resource = android.base.Resource;
 
 const REGEXP_ITEM = {
     id: /^@\+id\/\w+$/,
@@ -102,10 +102,11 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
     public beforeInsertNode(element: HTMLElement, sessionId: string) {
         if (this.included(element)) {
             if (element.childElementCount) {
-                if (!sameArray(element.children, (item: Element) => item.tagName)) {
+                if (new Set(Array.from(element.children).map((item: Element) => item.tagName)).size > 1) {
                     return false;
                 }
-                const rootElements = this.application.getProcessing(sessionId)!.rootElements;
+                const application = this.application;
+                const rootElements = application.getProcessing(sessionId)!.rootElements;
                 let current = element.parentElement;
                 while (current) {
                     if (current.tagName === 'NAV' && rootElements.includes(current)) {
@@ -113,9 +114,7 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
                     }
                     current = current.parentElement;
                 }
-                if (!rootElements.includes(element)) {
-                    rootElements.push(element);
-                }
+                application.addRootElement(sessionId, element);
                 return true;
             }
         }
@@ -127,8 +126,7 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
     }
 
     public processNode(node: T, parent: T) {
-        const outerParent = this.application.createNode(node.sessionId, { parent, flags: CREATE_NODE.DEFER });
-        outerParent.childIndex = node.childIndex;
+        const outerParent = this.application.createNode(node.sessionId, { parent, flags: CREATE_NODE.DEFER, childIndex:  node.childIndex });
         outerParent.actualParent = parent.actualParent;
         node.documentRoot = true;
         node.setControlType(NAVIGATION.MENU, CONTAINER_NODE.INLINE);
@@ -136,7 +134,7 @@ export default class Menu<T extends View> extends squared.base.ExtensionUI<T> {
         node.exclude({ resource: NODE_RESOURCE.ALL, procedure: NODE_PROCEDURE.ALL });
         node.render(outerParent);
         node.cascade((item: T) => this.addDescendant(item));
-        node.dataset['pathname' + capitalize(this.application.systemName)] = appendSeparator(this.controller.userSettings.outputDirectory, 'res/menu');
+        node.data(Application.KEY_NAME, 'pathname', appendSeparator(this.application.userSettings.outputDirectory, 'res/menu'));
         return {
             outerParent,
             output: {

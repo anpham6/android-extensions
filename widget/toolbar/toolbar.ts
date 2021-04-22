@@ -12,15 +12,17 @@ interface ToolbarThemeData {
     popupOverlay: string;
 }
 
+const Resource = android.base.Resource;
+
 const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
 const { CONTAINER_TAGNAME, CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
 
 const { formatPX } = squared.lib.css;
 const { getElementAsNode } = squared.lib.session;
-const { assignEmptyValue, capitalize, iterateArray } = squared.lib.util;
-const { createThemeAttribute, createViewAttribute, getDocumentId } = android.lib.util;
+const { capitalize, iterateArray } = squared.lib.util;
+const { createThemeAttribute, createViewAttribute, createViewOptions, getDocumentId, removeFileExtension } = android.lib.util;
 
-const Resource = android.base.Resource;
+const { assignEmptyValue } = squared.base.lib.util;
 
 const PREFIX_MENU = 'ic_menu_';
 
@@ -46,10 +48,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
             if (target) {
                 const targetElement = document.getElementById(target);
                 if (targetElement && !Toolbar.includes(application.getDatasetName('use', targetElement), WIDGET_NAME.COORDINATOR)) {
-                    const rootElements = application.getProcessing(sessionId)!.rootElements;
-                    if (!rootElements.includes(element)) {
-                        rootElements.push(element);
-                    }
+                    application.addRootElement(sessionId, element);
                 }
             }
         }
@@ -60,9 +59,8 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
         const application = this.application;
         const resource = this.resource as android.base.Resource<T>;
         const resourceId = node.localSettings.resourceId;
-        const settings = application.userSettings;
         const element = node.element as HTMLElement;
-        const options: StandardMap = { ...this.options[element.id.trim()] };
+        const options: StandardMap = { ...this.options.element?.[node.elementId] };
         const toolbarOptions = createViewAttribute(options.self);
         const appBarOptions = createViewAttribute(options.appBar);
         const collapsingToolbarOptions = createViewAttribute(options.collapsingToolbar);
@@ -137,14 +135,14 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
                 if (popupTheme) {
                     popupOverlay = popupTheme.replace('@style/', '');
                 }
-                app.popupTheme = `@style/${settings.manifestThemeName}.PopupOverlay`;
+                app.popupTheme = `@style/${application.userSettings.manifestThemeName}.PopupOverlay`;
             }
         }
         else {
             node.exclude({ procedure: NODE_PROCEDURE.LAYOUT });
             assignEmptyValue(toolbarOptions, 'android', 'fitsSystemWindows', 'true');
         }
-        assignEmptyValue(toolbarOptions, 'android', 'layout_height', hasAppBar || !node.hasPX('height') ? '?android:attr/actionBarSize' : '');
+        assignEmptyValue(toolbarOptions, 'android', 'layout_height', hasAppBar || !node.hasUnit('height') ? '?android:attr/actionBarSize' : '');
         node.setControlType(controlName, CONTAINER_NODE.BLOCK);
         node.exclude({ resource: NODE_RESOURCE.FONT_STYLE });
         if (hasAppBar) {
@@ -156,7 +154,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
                 if (android.theme) {
                     appBarOverlay = android.theme;
                 }
-                android.theme = `@style/${settings.manifestThemeName}.AppBarOverlay`;
+                android.theme = `@style/${application.userSettings.manifestThemeName}.AppBarOverlay`;
                 node.data(WIDGET_NAME.TOOLBAR, 'themeData', { appBarOverlay, popupOverlay } as ToolbarThemeData);
             }
             else {
@@ -248,6 +246,7 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
                         controller.addBeforeOutsideTemplate(
                             node,
                             controller.renderNodeStatic(
+                                node.sessionId,
                                 {
                                     controlName: CONTAINER_TAGNAME.IMAGE,
                                     width: 'match_parent',
@@ -302,20 +301,21 @@ export default class Toolbar<T extends View> extends squared.base.ExtensionUI<T>
     }
 
     public postOptimize(node: T) {
-        const menu = Toolbar.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['layoutName' + capitalize(this.application.systemName)];
+        const menu = Toolbar.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['filename' + capitalize(this.application.systemName)];
         if (menu) {
-            const toolbarOptions = createViewAttribute(this.options[node.elementId]?.self);
-            const app = toolbarOptions.app ||= {};
-            assignEmptyValue(app, 'menu', `@menu/${menu}`);
+            const options = createViewAttribute(createViewOptions(this.options, node.elementId).self);
+            const app = options.app ||= {};
+            assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
             node.app('menu', app.menu);
         }
         const themeData = node.data<ToolbarThemeData>(WIDGET_NAME.TOOLBAR, 'themeData');
         if (themeData) {
             const resourceId = node.localSettings.resourceId;
             const options = createThemeAttribute(this.options.resource);
-            const optionsActionBar = createThemeAttribute({ name: '.NoActionBar', output: options.output });
-            const optionsAppBar = createThemeAttribute({ name: '.AppBarOverlay', output: options.output });
-            const optionsPopup = createThemeAttribute({ name: '.PopupOverlay', output: options.output });
+            const output = options.output;
+            const optionsActionBar = createThemeAttribute({ name: '.NoActionBar', output });
+            const optionsAppBar = createThemeAttribute({ name: '.AppBarOverlay', output });
+            const optionsPopup = createThemeAttribute({ name: '.PopupOverlay', output });
             assignEmptyValue(options, 'name', this.application.userSettings.manifestThemeName);
             assignEmptyValue(options, 'parent', 'Theme.AppCompat.Light.DarkActionBar');
             assignEmptyValue(optionsActionBar.items, 'windowActionBar', 'false');
