@@ -1,4 +1,4 @@
-/* android.widget.floatingactionbutton 2.4.0
+/* android.widget.floatingactionbutton
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,11 +6,11 @@ this.android.widget = this.android.widget || {};
 this.android.widget.floatingactionbutton = (function () {
     'use strict';
 
+    const Resource = android.base.Resource;
     const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
-    const { assignEmptyValue } = squared.lib.util;
-    const { createViewAttribute, parseColor } = android.lib.util;
-    const Resource = android.base.Resource;
+    const { createViewOptions, parseColor } = android.lib.util;
+    const { assignEmptyValue } = squared.base.lib.util;
     const SUPPORTED_INPUT = [
         'button',
         'file',
@@ -29,7 +29,7 @@ this.android.widget.floatingactionbutton = (function () {
             return this.included(node.element);
         }
         processNode(node, parent) {
-            const options = createViewAttribute(this.options[node.elementId]);
+            const options = createViewOptions(this.options, node.elementId);
             const { element, target } = node;
             const resourceId = node.localSettings.resourceId;
             const backgroundColor = node.css('backgroundColor');
@@ -70,23 +70,23 @@ this.android.widget.floatingactionbutton = (function () {
                 if (node.autoMargin.leftRight) {
                     node.mergeGravity('layout_gravity', 'center_horizontal');
                 }
-                else if (node.hasPX('left')) {
+                else if (node.hasUnit('left')) {
                     node.mergeGravity('layout_gravity', node.localizeString('left'));
                     node.modifyBox(8 /* MARGIN_LEFT */, offsetParent.getAbsolutePaddingOffset(128 /* PADDING_LEFT */, node.left));
                 }
-                else if (node.hasPX('right')) {
+                else if (node.hasUnit('right')) {
                     node.mergeGravity('layout_gravity', node.localizeString('right'));
                     node.modifyBox(2 /* MARGIN_RIGHT */, offsetParent.getAbsolutePaddingOffset(32 /* PADDING_RIGHT */, node.right));
                 }
                 if (node.autoMargin.topBottom) {
                     node.mergeGravity('layout_gravity', 'center_vertical');
                 }
-                else if (node.hasPX('top')) {
+                else if (node.hasUnit('top')) {
                     node.app('layout_dodgeInsetEdges', 'top');
                     node.mergeGravity('layout_gravity', 'top');
                     node.modifyBox(1 /* MARGIN_TOP */, offsetParent.getAbsolutePaddingOffset(16 /* PADDING_TOP */, node.top));
                 }
-                else if (node.hasPX('bottom')) {
+                else if (node.hasUnit('bottom')) {
                     node.mergeGravity('layout_gravity', 'bottom');
                     node.modifyBox(4 /* MARGIN_BOTTOM */, offsetParent.getAbsolutePaddingOffset(64 /* PADDING_BOTTOM */, node.bottom));
                 }

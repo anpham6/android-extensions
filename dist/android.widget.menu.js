@@ -1,4 +1,4 @@
-/* android.widget.menu 2.4.0
+/* android.widget.menu
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,12 +6,12 @@ this.android.widget = this.android.widget || {};
 this.android.widget.menu = (function () {
     'use strict';
 
+    const Application = squared.base.Application;
+    const Resource = android.base.Resource;
     const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_NODE } = android.lib.constant;
-    const { capitalize, sameArray } = squared.lib.util;
     const { createViewAttribute } = android.lib.util;
     const { appendSeparator } = squared.base.lib.util;
-    const Resource = android.base.Resource;
     const REGEXP_ITEM = {
         id: /^@\+id\/\w+$/,
         title: /^.+$/,
@@ -89,10 +89,11 @@ this.android.widget.menu = (function () {
         beforeInsertNode(element, sessionId) {
             if (this.included(element)) {
                 if (element.childElementCount) {
-                    if (!sameArray(element.children, (item) => item.tagName)) {
+                    if (new Set(Array.from(element.children).map((item) => item.tagName)).size > 1) {
                         return false;
                     }
-                    const rootElements = this.application.getProcessing(sessionId).rootElements;
+                    const application = this.application;
+                    const rootElements = application.getProcessing(sessionId).rootElements;
                     let current = element.parentElement;
                     while (current) {
                         if (current.tagName === 'NAV' && rootElements.includes(current)) {
@@ -100,9 +101,7 @@ this.android.widget.menu = (function () {
                         }
                         current = current.parentElement;
                     }
-                    if (!rootElements.includes(element)) {
-                        rootElements.push(element);
-                    }
+                    application.addRootElement(sessionId, element);
                     return true;
                 }
             }
@@ -112,8 +111,7 @@ this.android.widget.menu = (function () {
             return this.included(node.element);
         }
         processNode(node, parent) {
-            const outerParent = this.application.createNode(node.sessionId, { parent, flags: 1 /* DEFER */ });
-            outerParent.childIndex = node.childIndex;
+            const outerParent = this.application.createNode(node.sessionId, { parent, flags: 1 /* DEFER */, childIndex: node.childIndex });
             outerParent.actualParent = parent.actualParent;
             node.documentRoot = true;
             node.setControlType(NAVIGATION.MENU, 11 /* INLINE */);
@@ -121,7 +119,7 @@ this.android.widget.menu = (function () {
             node.exclude({ resource: 31 /* ALL */, procedure: 63 /* ALL */ });
             node.render(outerParent);
             node.cascade((item) => this.addDescendant(item));
-            node.dataset['pathname' + capitalize(this.application.systemName)] = appendSeparator(this.controller.userSettings.outputDirectory, 'res/menu');
+            node.data(Application.KEY_NAME, 'pathname', appendSeparator(this.application.userSettings.outputDirectory, 'res/menu'));
             return {
                 outerParent,
                 output: {

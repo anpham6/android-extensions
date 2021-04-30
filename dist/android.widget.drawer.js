@@ -1,4 +1,4 @@
-/* android.widget.drawer 2.4.0
+/* android.widget.drawer
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,11 +6,12 @@ this.android.widget = this.android.widget || {};
 this.android.widget.drawer = (function () {
     'use strict';
 
+    const Resource = android.base.Resource;
     const { NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
-    const { assignEmptyValue, cloneObject, iterateArray } = squared.lib.util;
-    const { createThemeAttribute, createViewAttribute } = android.lib.util;
-    const Resource = android.base.Resource;
+    const { cloneObject, iterateArray } = squared.lib.util;
+    const { createThemeAttribute, createViewAttribute, removeFileExtension } = android.lib.util;
+    const { assignEmptyValue } = squared.base.lib.util;
     class Drawer extends squared.base.ExtensionUI {
         constructor(name, framework, options) {
             super(name, framework, options);
@@ -30,10 +31,7 @@ this.android.widget.drawer = (function () {
                         }
                     }
                 });
-                const rootElements = application.getProcessing(sessionId).rootElements;
-                if (!rootElements.includes(element)) {
-                    rootElements.push(element);
-                }
+                application.addRootElement(sessionId, element);
                 return true;
             }
             return false;
@@ -79,21 +77,21 @@ this.android.widget.drawer = (function () {
                 if (node.sessionId === sessionId) {
                     const systemName = node.localSettings.systemName;
                     const options = createViewAttribute(this.options.navigationView);
-                    const menu = (_a = Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['layoutName' + systemName];
-                    const headerLayout = (_b = Drawer.findNestedElement(node, "android.external" /* EXTERNAL */)) === null || _b === void 0 ? void 0 : _b.dataset['layoutName' + systemName];
+                    const menu = (_a = Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['filename' + systemName];
+                    const headerLayout = (_b = Drawer.findNestedElement(node, "android.external" /* EXTERNAL */)) === null || _b === void 0 ? void 0 : _b.dataset['filename' + systemName];
                     const app = options.app || (options.app = {});
                     if (menu) {
-                        assignEmptyValue(app, 'menu', `@menu/${menu}`);
+                        assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
                     }
                     if (headerLayout) {
-                        assignEmptyValue(app, 'headerLayout', `@layout/${headerLayout}`);
+                        assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
                     }
                     if (menu || headerLayout) {
                         const controller = this.controller;
                         assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
                         assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
                         assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
-                        controller.addAfterInsideTemplate(node, controller.renderNodeStatic({
+                        controller.addAfterInsideTemplate(node, controller.renderNodeStatic(node.sessionId, {
                             controlName: node.api < 29 /* Q */ ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
                             width: 'wrap_content',
                             height: 'match_parent'
@@ -110,16 +108,16 @@ this.android.widget.drawer = (function () {
             }
         }
         setStyleTheme(resourceId, api) {
-            const settings = this.application.userSettings;
+            const { manifestThemeName, manifestParentThemeName } = this.application.userSettings;
             const options = createThemeAttribute(this.options.resource);
-            assignEmptyValue(options, 'name', settings.manifestThemeName);
-            assignEmptyValue(options, 'parent', settings.manifestParentThemeName);
+            assignEmptyValue(options, 'name', manifestThemeName);
+            assignEmptyValue(options, 'parent', manifestParentThemeName);
             assignEmptyValue(options.items, 'android:windowTranslucentStatus', 'true');
             Resource.addTheme(resourceId, options);
             if (api >= 21 /* LOLLIPOP */) {
                 const themeOptions = createThemeAttribute(cloneObject(options));
                 const items = {};
-                assignEmptyValue(themeOptions.output, 'path', 'res/values-v21');
+                assignEmptyValue(themeOptions.output || (themeOptions.output = {}), 'pathname', 'res/values-v21');
                 assignEmptyValue(items, 'android:windowDrawsSystemBarBackgrounds', 'true');
                 assignEmptyValue(items, 'android:statusBarColor', '@android:color/transparent');
                 themeOptions.items = items;

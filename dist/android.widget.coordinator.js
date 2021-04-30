@@ -1,4 +1,4 @@
-/* android.widget.coordinator 2.4.0
+/* android.widget.coordinator
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,15 +6,15 @@ this.android.widget = this.android.widget || {};
 this.android.widget.coordinator = (function () {
     'use strict';
 
+    const Resource = android.base.Resource;
     const { NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
     const { getElementAsNode } = squared.lib.session;
-    const { createViewAttribute } = android.lib.util;
-    const Resource = android.base.Resource;
+    const { createViewOptions } = android.lib.util;
     class Coordinator extends squared.base.ExtensionUI {
         processNode(node, parent) {
             var _a;
-            const options = createViewAttribute(this.options[node.elementId]);
+            const options = createViewOptions(this.options, node.elementId);
             Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'));
             const element = Coordinator.findNestedElement(node, "android.widget.toolbar" /* TOOLBAR */);
             if (element) {

@@ -1,4 +1,4 @@
-/* android.widget.bottomnavigation 2.4.0
+/* android.widget.bottomnavigation
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,24 +6,23 @@ this.android.widget = this.android.widget || {};
 this.android.widget.bottomnavigation = (function () {
     'use strict';
 
+    const Resource = android.base.Resource;
     const { NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
-    const { assignEmptyValue, capitalize, iterateArray } = squared.lib.util;
-    const { createThemeAttribute, createViewAttribute } = android.lib.util;
-    const Resource = android.base.Resource;
+    const { capitalize, iterateArray } = squared.lib.util;
+    const { createThemeAttribute, createViewOptions, removeFileExtension } = android.lib.util;
+    const { assignEmptyValue } = squared.base.lib.util;
     class BottomNavigation extends squared.base.ExtensionUI {
         constructor(name, framework, options) {
             super(name, framework, options);
             this.require({ name: "android.widget.menu" /* MENU */ });
         }
         processNode(node, parent) {
-            const options = createViewAttribute(this.options[node.elementId]);
+            const options = createViewOptions(this.options, node.elementId);
             assignEmptyValue(options, 'android', 'background', '?android:attr/windowBackground');
             iterateArray(node.children, (item) => {
                 item.hide();
-                item.cascade((child) => {
-                    child.hide();
-                });
+                item.cascade((child) => child.hide());
             }, 5);
             const resourceId = node.localSettings.resourceId;
             const controlName = node.api < 29 /* Q */ ? SUPPORT_TAGNAME.BOTTOM_NAVIGATION : SUPPORT_TAGNAME_X.BOTTOM_NAVIGATION;
@@ -56,11 +55,11 @@ this.android.widget.bottomnavigation = (function () {
                     renderParent.setLayoutHeight('match_parent');
                 }
             }
-            const menu = (_a = BottomNavigation.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['layoutName' + capitalize(this.application.systemName)];
+            const menu = (_a = BottomNavigation.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['filename' + capitalize(this.application.systemName)];
             if (menu) {
-                const options = createViewAttribute(this.options[node.elementId]);
+                const options = createViewOptions(this.options, node.elementId);
                 const app = options.app || (options.app = {});
-                assignEmptyValue(app, 'menu', `@menu/${menu}`);
+                assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
                 node.app('menu', app.menu);
             }
         }

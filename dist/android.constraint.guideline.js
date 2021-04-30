@@ -1,4 +1,4 @@
-/* android.constraint.guideline 2.4.0
+/* android.constraint.guideline
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -11,6 +11,13 @@ this.android.constraint.guideline = (function () {
     const { formatPX } = squared.lib.css;
     const { hypotenuse } = squared.lib.math;
     const { withinRange } = squared.lib.util;
+    function getCenter(node) {
+        const bounds = node.bounds;
+        return {
+            x: (bounds.left + bounds.right) / 2,
+            y: (bounds.top + bounds.bottom) / 2
+        };
+    }
     class Guideline extends squared.base.ExtensionUI {
         constructor() {
             super(...arguments);
@@ -65,10 +72,10 @@ this.android.constraint.guideline = (function () {
                 if (!anchor.anchored) {
                     controller.addGuideline({ target: anchor, parent: node });
                 }
-                const { x: x2, y: y2 } = anchor.center;
+                const { x: x2, y: y2 } = getCenter(anchor);
                 node.each((item) => {
                     if (!item.anchored) {
-                        const { x: x1, y: y1 } = item.center;
+                        const { x: x1, y: y1 } = getCenter(item);
                         const x = Math.abs(x1 - x2);
                         const y = Math.abs(y1 - y2);
                         const radius = Math.round(hypotenuse(x, y));

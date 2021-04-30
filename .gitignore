@@ -1,9 +1,9 @@
 build/
 html/dist/
 node_modules/
+tmp/
+.DS_Store
 *.code-workspace
 package-lock.json
-.DS_Store
 serve.js
 squared.settings.json
-tmp/

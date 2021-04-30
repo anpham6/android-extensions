@@ -1,4 +1,4 @@
-/* android.widget.toolbar 2.4.0
+/* android.widget.toolbar
    https://github.com/anpham6/squared */
 
 this.android = this.android || {};
@@ -6,13 +6,14 @@ this.android.widget = this.android.widget || {};
 this.android.widget.toolbar = (function () {
     'use strict';
 
+    const Resource = android.base.Resource;
     const { NODE_PROCEDURE, NODE_RESOURCE } = squared.base.lib.constant;
     const { CONTAINER_TAGNAME, CONTAINER_NODE, SUPPORT_TAGNAME, SUPPORT_TAGNAME_X } = android.lib.constant;
     const { formatPX } = squared.lib.css;
     const { getElementAsNode } = squared.lib.session;
-    const { assignEmptyValue, capitalize, iterateArray } = squared.lib.util;
-    const { createThemeAttribute, createViewAttribute, getDocumentId } = android.lib.util;
-    const Resource = android.base.Resource;
+    const { capitalize, iterateArray } = squared.lib.util;
+    const { createThemeAttribute, createViewAttribute, createViewOptions, getDocumentId, removeFileExtension } = android.lib.util;
+    const { assignEmptyValue } = squared.base.lib.util;
     const PREFIX_MENU = 'ic_menu_';
     class Toolbar extends squared.base.ExtensionUI {
         constructor(name, framework, options) {
@@ -35,22 +36,19 @@ this.android.widget.toolbar = (function () {
                 if (target) {
                     const targetElement = document.getElementById(target);
                     if (targetElement && !Toolbar.includes(application.getDatasetName('use', targetElement), "android.widget.coordinator" /* COORDINATOR */)) {
-                        const rootElements = application.getProcessing(sessionId).rootElements;
-                        if (!rootElements.includes(element)) {
-                            rootElements.push(element);
-                        }
+                        application.addRootElement(sessionId, element);
                     }
                 }
             }
             return false;
         }
         processNode(node, parent) {
+            var _a;
             const application = this.application;
             const resource = this.resource;
             const resourceId = node.localSettings.resourceId;
-            const settings = application.userSettings;
             const element = node.element;
-            const options = Object.assign({}, this.options[element.id.trim()]);
+            const options = Object.assign({}, (_a = this.options.element) === null || _a === void 0 ? void 0 : _a[node.elementId]);
             const toolbarOptions = createViewAttribute(options.self);
             const appBarOptions = createViewAttribute(options.appBar);
             const collapsingToolbarOptions = createViewAttribute(options.collapsingToolbar);
@@ -118,14 +116,14 @@ this.android.widget.toolbar = (function () {
                     if (popupTheme) {
                         popupOverlay = popupTheme.replace('@style/', '');
                     }
-                    app.popupTheme = `@style/${settings.manifestThemeName}.PopupOverlay`;
+                    app.popupTheme = `@style/${application.userSettings.manifestThemeName}.PopupOverlay`;
                 }
             }
             else {
                 node.exclude({ procedure: 2 /* LAYOUT */ });
                 assignEmptyValue(toolbarOptions, 'android', 'fitsSystemWindows', 'true');
             }
-            assignEmptyValue(toolbarOptions, 'android', 'layout_height', hasAppBar || !node.hasPX('height') ? '?android:attr/actionBarSize' : '');
+            assignEmptyValue(toolbarOptions, 'android', 'layout_height', hasAppBar || !node.hasUnit('height') ? '?android:attr/actionBarSize' : '');
             node.setControlType(controlName, 14 /* BLOCK */);
             node.exclude({ resource: 4 /* FONT_STYLE */ });
             if (hasAppBar) {
@@ -137,7 +135,7 @@ this.android.widget.toolbar = (function () {
                     if (android.theme) {
                         appBarOverlay = android.theme;
                     }
-                    android.theme = `@style/${settings.manifestThemeName}.AppBarOverlay`;
+                    android.theme = `@style/${application.userSettings.manifestThemeName}.AppBarOverlay`;
                     node.data("android.widget.toolbar" /* TOOLBAR */, 'themeData', { appBarOverlay, popupOverlay });
                 }
                 else {
@@ -222,7 +220,7 @@ this.android.widget.toolbar = (function () {
                             assignEmptyValue(backgroundImageOptions, 'android', 'scaleType', scaleType);
                             assignEmptyValue(backgroundImageOptions, 'android', 'fitsSystemWindows', 'true');
                             assignEmptyValue(app, 'layout_collapseMode', 'parallax');
-                            controller.addBeforeOutsideTemplate(node, controller.renderNodeStatic({
+                            controller.addBeforeOutsideTemplate(node, controller.renderNodeStatic(node.sessionId, {
                                 controlName: CONTAINER_TAGNAME.IMAGE,
                                 width: 'match_parent',
                                 height: 'match_parent'
@@ -271,21 +269,22 @@ this.android.widget.toolbar = (function () {
             }
         }
         postOptimize(node) {
-            var _a, _b;
-            const menu = (_a = Toolbar.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['layoutName' + capitalize(this.application.systemName)];
+            var _a;
+            const menu = (_a = Toolbar.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['filename' + capitalize(this.application.systemName)];
             if (menu) {
-                const toolbarOptions = createViewAttribute((_b = this.options[node.elementId]) === null || _b === void 0 ? void 0 : _b.self);
-                const app = toolbarOptions.app || (toolbarOptions.app = {});
-                assignEmptyValue(app, 'menu', `@menu/${menu}`);
+                const options = createViewAttribute(createViewOptions(this.options, node.elementId).self);
+                const app = options.app || (options.app = {});
+                assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
                 node.app('menu', app.menu);
             }
             const themeData = node.data("android.widget.toolbar" /* TOOLBAR */, 'themeData');
             if (themeData) {
                 const resourceId = node.localSettings.resourceId;
                 const options = createThemeAttribute(this.options.resource);
-                const optionsActionBar = createThemeAttribute({ name: '.NoActionBar', output: options.output });
-                const optionsAppBar = createThemeAttribute({ name: '.AppBarOverlay', output: options.output });
-                const optionsPopup = createThemeAttribute({ name: '.PopupOverlay', output: options.output });
+                const output = options.output;
+                const optionsActionBar = createThemeAttribute({ name: '.NoActionBar', output });
+                const optionsAppBar = createThemeAttribute({ name: '.AppBarOverlay', output });
+                const optionsPopup = createThemeAttribute({ name: '.PopupOverlay', output });
                 assignEmptyValue(options, 'name', this.application.userSettings.manifestThemeName);
                 assignEmptyValue(options, 'parent', 'Theme.AppCompat.Light.DarkActionBar');
                 assignEmptyValue(optionsActionBar.items, 'windowActionBar', 'false');
