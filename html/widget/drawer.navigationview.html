@@ -97,6 +97,7 @@
             System.import('/build/widget/drawer/main.js')
         ]).then(() => {
             squared.setFramework(android);
+            squared.settings.createBuildDependencies = true;
             squared.apply('android.widget.drawer', {
                 self: {
                     android: {

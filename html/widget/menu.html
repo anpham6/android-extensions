@@ -74,6 +74,7 @@
     <script>
         System.import('/build/widget/menu/main.js').then(() => {
             squared.setFramework(android);
+            squared.settings.createBuildDependencies = true;
             squared.parseDocument('squared_ui').then(function() {
                 squared.settings.outputEmptyCopyDirectory = true;
                 squared.copyTo('D:/git/menu', {

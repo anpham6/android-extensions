@@ -104,6 +104,7 @@
             System.import('/build/widget/toolbar/main.js')
         ]).then(() => {
             squared.setFramework(android);
+            squared.settings.createBuildDependencies = true;
             squared.apply('android.widget.toolbar', {
                 element: {
                     toolbar_demo: {

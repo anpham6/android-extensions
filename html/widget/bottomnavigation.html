@@ -64,6 +64,7 @@
             System.import('/build/widget/bottomnavigation/main.js')
         ]).then(() => {
             squared.setFramework(android);
+            squared.settings.createBuildDependencies = true;
             squared.apply('android.widget.bottomnavigation', {
                 element: {
                     bottomnavigation_demo: {
