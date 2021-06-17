@@ -75,6 +75,8 @@
         System.import('/build/widget/menu/main.js').then(() => {
             squared.setFramework(android);
             squared.settings.createBuildDependencies = true;
+            squared.settings.createManifest = true;
+            squared.settings.manifestParentThemeName = 'Theme.AppCompat.Light';
             squared.parseDocument('squared_ui').then(function() {
                 squared.settings.outputEmptyCopyDirectory = true;
                 squared.copyTo('D:/git/menu', {

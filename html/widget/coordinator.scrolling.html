@@ -83,6 +83,7 @@
         ]).then(() => {
             squared.setFramework(android);
             squared.settings.createBuildDependencies = true;
+            squared.settings.createManifest = true;
             squared.add('android.substitute');
             squared.apply('android.widget.toolbar', {
                 element: {

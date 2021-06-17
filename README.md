@@ -1,4 +1,4 @@
-# android-extensions 3.0
+# android-extensions 3.1
 
 Examples can be found in the "html/widget" directory.
 
@@ -29,15 +29,13 @@ Examples can be found in the "html/widget" directory.
 </script>
 ```
 
-* android.external
-* android.substitute
 * android.constraint.guideline
+* android.widget.bottomnavigation
 * android.widget.coordinator
+* android.widget.drawer
 * android.widget.floatingactionbutton
 * android.widget.menu
-* android.widget.bottomnavigation
 * android.widget.toolbar
-* android.widget.drawer
 
 ### LICENSE
 
