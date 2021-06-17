@@ -73,30 +73,28 @@ this.android.widget.drawer = (function () {
         }
         afterParseDocument(sessionId) {
             var _a, _b;
-            for (const node of this.subscribers) {
-                if (node.sessionId === sessionId) {
-                    const systemName = node.localSettings.systemName;
-                    const options = createViewAttribute(this.options.navigationView);
-                    const menu = (_a = Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['filename' + systemName];
-                    const headerLayout = (_b = Drawer.findNestedElement(node, "android.external" /* EXTERNAL */)) === null || _b === void 0 ? void 0 : _b.dataset['filename' + systemName];
-                    const app = options.app || (options.app = {});
-                    if (menu) {
-                        assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
-                    }
-                    if (headerLayout) {
-                        assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
-                    }
-                    if (menu || headerLayout) {
-                        const controller = this.controller;
-                        assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
-                        assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
-                        assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
-                        controller.addAfterInsideTemplate(node, controller.renderNodeStatic(node.sessionId, {
-                            controlName: node.api < 29 /* Q */ ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
-                            width: 'wrap_content',
-                            height: 'match_parent'
-                        }, Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'))));
-                    }
+            for (const node of this.subscribers.values(sessionId)) {
+                const systemName = node.localSettings.systemName;
+                const options = createViewAttribute(this.options.navigationView);
+                const menu = (_a = Drawer.findNestedElement(node, "android.widget.menu" /* MENU */)) === null || _a === void 0 ? void 0 : _a.dataset['filename' + systemName];
+                const headerLayout = (_b = Drawer.findNestedElement(node, "android.external" /* EXTERNAL */)) === null || _b === void 0 ? void 0 : _b.dataset['filename' + systemName];
+                const app = options.app || (options.app = {});
+                if (menu) {
+                    assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
+                }
+                if (headerLayout) {
+                    assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
+                }
+                if (menu || headerLayout) {
+                    const controller = this.controller;
+                    assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
+                    assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
+                    assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
+                    controller.addAfterInsideTemplate(node, controller.renderNodeStatic(node.sessionId, {
+                        controlName: node.api < 29 /* Q */ ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
+                        width: 'wrap_content',
+                        height: 'match_parent'
+                    }, Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean("android.resource.strings" /* RESOURCE_STRINGS */, 'numberAsResource'))));
                 }
             }
         }

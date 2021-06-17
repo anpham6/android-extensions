@@ -105,6 +105,7 @@
         ]).then(() => {
             squared.setFramework(android);
             squared.settings.createBuildDependencies = true;
+            squared.settings.createManifest = true;
             squared.apply('android.widget.toolbar', {
                 element: {
                     toolbar_demo: {

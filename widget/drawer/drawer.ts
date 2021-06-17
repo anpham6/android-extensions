@@ -80,37 +80,35 @@ export default class Drawer<T extends View> extends squared.base.ExtensionUI<T> 
     }
 
     public afterParseDocument(sessionId: string) {
-        for (const node of this.subscribers) {
-            if (node.sessionId === sessionId) {
-                const systemName = node.localSettings.systemName;
-                const options = createViewAttribute(this.options.navigationView);
-                const menu = Drawer.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['filename' + systemName];
-                const headerLayout = Drawer.findNestedElement(node, EXT_ANDROID.EXTERNAL)?.dataset['filename' + systemName];
-                const app = options.app ||= {};
-                if (menu) {
-                    assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
-                }
-                if (headerLayout) {
-                    assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
-                }
-                if (menu || headerLayout) {
-                    const controller = this.controller as android.base.Controller<T>;
-                    assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
-                    assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
-                    assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
-                    controller.addAfterInsideTemplate(
-                        node,
-                        controller.renderNodeStatic(
-                            node.sessionId,
-                            {
-                                controlName: node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
-                                width: 'wrap_content',
-                                height: 'match_parent'
-                            },
-                            Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'))
-                        )
-                    );
-                }
+        for (const node of this.subscribers.values(sessionId)) {
+            const systemName = node.localSettings.systemName;
+            const options = createViewAttribute(this.options.navigationView);
+            const menu = Drawer.findNestedElement(node, WIDGET_NAME.MENU)?.dataset['filename' + systemName];
+            const headerLayout = Drawer.findNestedElement(node, EXT_ANDROID.EXTERNAL)?.dataset['filename' + systemName];
+            const app = options.app ||= {};
+            if (menu) {
+                assignEmptyValue(app, 'menu', `@menu/${removeFileExtension(menu)}`);
+            }
+            if (headerLayout) {
+                assignEmptyValue(app, 'headerLayout', `@layout/${removeFileExtension(headerLayout)}`);
+            }
+            if (menu || headerLayout) {
+                const controller = this.controller as android.base.Controller<T>;
+                assignEmptyValue(options, 'android', 'id', `@+id/${node.controlId}_navigation`);
+                assignEmptyValue(options, 'android', 'fitsSystemWindows', 'true');
+                assignEmptyValue(options, 'android', 'layout_gravity', node.localizeString('left'));
+                controller.addAfterInsideTemplate(
+                    node,
+                    controller.renderNodeStatic(
+                        node.sessionId,
+                        {
+                            controlName: node.api < BUILD_VERSION.Q ? SUPPORT_TAGNAME.NAVIGATION_VIEW : SUPPORT_TAGNAME_X.NAVIGATION_VIEW,
+                            width: 'wrap_content',
+                            height: 'match_parent'
+                        },
+                        Resource.formatOptions(node.localSettings.resourceId, options, this.application.extensionManager.valueAsBoolean(EXT_ANDROID.RESOURCE_STRINGS, 'numberAsResource'))
+                    )
+                );
             }
         }
     }

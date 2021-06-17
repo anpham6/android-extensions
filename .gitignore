@@ -3,6 +3,7 @@ html/dist/
 node_modules/
 tmp/
 .DS_Store
+.vscode/settings.json
 *.code-workspace
 package-lock.json
 serve.js

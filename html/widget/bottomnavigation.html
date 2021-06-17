@@ -65,6 +65,7 @@
         ]).then(() => {
             squared.setFramework(android);
             squared.settings.createBuildDependencies = true;
+            squared.settings.createManifest = true;
             squared.apply('android.widget.bottomnavigation', {
                 element: {
                     bottomnavigation_demo: {
